@@ -1,17 +1,13 @@
 var deckRevealedIncreasing = function(deck) {
-    const n = deck.length;
-    deck.sort((a, b) => a - b);
-    const revealed = [];
-    revealed.unshift(deck[n - 1]);
-    for (let i = n - 2; i >= 0; i--) {
-        revealed.unshift(revealed.pop());
-        revealed.unshift(deck[i]);
-        // console.log(revealed)
+    const res = Array(deck.length)
+    const queue = Array(deck.length)
+    deck.sort((a , b) => a - b)
+    for(let i = 0; i < queue.length; i++) queue[i] = i
+    for(let card of deck){
+        let idx = queue.shift()
+        res[idx] = card
+        // skip the next index
+        if(queue.length) queue.push(queue.shift())
     }
-    return revealed;
+    return res
 };
-console.log(deckRevealedIncreasing([17, 13, 11, 2, 3, 5, 7]))
-// console.log(deckRevealedIncreasing([1,2,3,4,5]))
-// console.log(deckRevealedIncreasing([17, 13, 11, 2, 3, 5,7,19]))
-// console.log(deckRevealedIncreasing([1 , 1000]))
-// console.log(deckRevealedIncreasing([1, 2, 3, 4]))

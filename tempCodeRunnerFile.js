@@ -1,1 +1,1 @@
-odd
+queue.forEach((_, i) => queue[i] = i);
