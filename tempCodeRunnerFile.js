@@ -1,1 +1,1 @@
-queue.forEach((_, i) => queue[i] = i);
+1 , 2,3

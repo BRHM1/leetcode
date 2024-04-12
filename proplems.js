@@ -24,9 +24,51 @@ var removeKdigits = (num, k) => {
     }
     return stack.slice(0, stack.length - k).join('') || "0"
 }
-console.log(removeKdigits("10200", 1)) // 200
-console.log(removeKdigits("1432219", 3)) // 1219
-console.log(removeKdigits("9", 1)) // 0
-console.log(removeKdigits("1112", 1)) // 111
-console.log(removeKdigits("43214321", 4)) // 1321
-console.log(removeKdigits("10001", 4)) // 0
+
+var trap = function (height) {
+    let water = 0, units = 0, diff = 0
+    let stack = []
+    let flag = false
+    for (let i = 0; i < height.length; i++) {
+        while(units){
+            stack.push(stack.at(-1))
+            units--
+        }
+        units = 0
+        while (height[i] > stack.at(-1)) {
+            flag = true
+            if (stack.at(-2) < stack.at(-1) || stack.length === 1) break
+            diff += stack.pop()
+            units++
+        }
+        if(flag){
+             water += Math.min( height[i], stack.at(-1)) * units - diff
+            }
+        stack.push(height[i])
+        diff = 0
+        flag = false
+    }
+    return water
+};
+
+// make a deep clone for object 
+const foo = {
+    firstname : "ahmed",
+    lastname: {
+        f : "ibrahiem",
+        l : "saoud"
+    }
+}
+
+const deepCopy = (obj) => {
+    let res = {}
+    for(let key in obj){
+        if(typeof obj[key] === "object"){
+            res[key] = deepCopy(obj[key])
+        }else {
+            res[key] = obj[key]
+        }
+    }
+    return res
+}
+
