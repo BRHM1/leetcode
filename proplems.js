@@ -63,28 +63,6 @@ const deepCopy = (obj) => {
     return res
 }
 
-var largestRectangleArea = function(heights) {
-    let stack = [] // [starting index , value]
-    let max = 0
-    for(let i = 0; i < heights.length; i++){
-        let start = i
-        while(stack.length && stack.at(-1)[1] > heights[i]){
-            let [idx , value] = stack.pop()
-            let area = (i - idx) * value
-            max = Math.max(max , area)
-            start = idx
-        }
-        stack.push([start , heights[i]])
-    }
-    // the remaining items in the stack made it tell the end of the stack so the area = (heights.length - idx) * value
-    while(stack.length){
-        let [idx , value] = stack.pop()
-        let area = (heights.length - idx) * value
-        max = Math.max(area , max)
-    }
-    return max
-};
-
 var maximalRectangle = function (matrix) {
     // approach : combine each row with the row on top of it to create histogram then calculate the max area in that histogram
     // if there is a zero it makes the total col = 0
@@ -106,3 +84,24 @@ var maximalRectangle = function (matrix) {
     }
     return max
 };
+
+const largestRectangleArea2 = (histogram) => {
+    let maxArea = 0
+    let stack = [] // [starting index , height]
+    for(let i = 0; i < histogram.length; i++){
+        let start = i
+        while(stack.length && stack.at(-1)[1] > histogram[i]){ // it means i can't extend it further more 
+            let [index , height] = stack.pop()
+            maxArea = Math.max(maxArea , (i - index) * height)
+            // the popped one is bigger than the current one , it means i can extend the current one to the left direction
+            // so i made the start of the current one === to the index i just popped
+            start = index
+        } 
+        stack.push([start , histogram[i]])
+    }
+    // may be some element's left in the stack (those who made it to the end of the histogram)
+    for(let [index , height] of stack){
+        maxArea = Math.max(maxArea , (histogram.length - index) * height)
+    }
+    return maxArea
+}
