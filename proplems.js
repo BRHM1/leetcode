@@ -84,48 +84,25 @@ var largestRectangleArea = function(heights) {
     }
     return max
 };
-console.log(largestRectangleArea([2,1,5,6,2,3])) // 10
-console.log(largestRectangleArea([2,4])) // 4
 
 var maximalRectangle = function (matrix) {
-    // approach : make two grids one for the max width ending at that point second one for the height
-    let ROWS = matrix.length, COLS = matrix[0].length
-    const width = Array(ROWS).fill().map(() => Array(COLS).fill(0))
-    const height = Array(ROWS).fill().map(() => Array(COLS).fill(0))
+    // approach : combine each row with the row on top of it to create histogram then calculate the max area in that histogram
+    // if there is a zero it makes the total col = 0
     let max = 0
-    function getTheFirstDecreasingRow(num){
-        // go and binary search in the width matrix to get the first uncompleted row
-    }
-    for (let r = 0; r < ROWS; r++) {
-        for (let c = 0; c < COLS; c++) {
-            // if the height goes above 1 that means there is a factor width (min)
-            // logic for height calc
-            if (r - 1 >= 0) {
-                height[r][c] += matrix[r][c] === "1" ? (height[r - 1][c] || 0) + 1 : 0
-            } else {
-                height[r][c] += +(matrix[r][c])
-            }
-            // logic for width calc
-            width[r][c] += matrix[r][c] === "1" ? (width[r][c - 1] || 0) + 1 : 0
-            max = Math.max(max, width[r][c], height[r][c])
-            if (height[r][c] > 1) {
-                // width[r][c] = Math.min(width[r][c], width[r - 1][c])
-                for(let i = 1; i < height[r][c]; i++){
-                    max = Math.max(max, Math.min(width[r][c], width[r - i][c]) * height[r - i][c])
-                }
-            } else {
-                max = Math.max(max, width[r][c] * height[r][c])
+    let histogram_arr = Array(matrix.length).fill().map(() => Array(matrix[0].length))
+    for(let r = 0; r < matrix.length; r++){
+        for(let c = 0; c < matrix[0].length; c++){
+            if(r === 0){
+                histogram_arr[r][c] = +matrix[r][c]
+            }else if(matrix[r][c] === "0"){
+                histogram_arr[r][c] = 0
+            }else {
+                histogram_arr[r][c] = +histogram_arr[r - 1][c] + 1
             }
         }
     }
-    console.log("w", width)
-    console.log("h", height)
+    for(let histogram of histogram_arr){
+        max = Math.max(max , largestRectangleArea(histogram))
+    }
     return max
 };
-// console.log(maximalRectangle([["1","0","1","0","0"],["1","0","1","1","1"],["1","1","1","1","1"],["1","0","0","1","0"]])) // 6
-// console.log(maximalRectangle([["0" ,"0","1","1"],["0","1","1","1"],["0","1" , "1" , "1"]])) // 6
-// console.log(maximalRectangle([["1", "0", "1"], ["1", "1", "0"]])) // 2
-// console.log(maximalRectangle([["0"]])) // 0
-// console.log(maximalRectangle([["1"]])) // 1
-// console.log(maximalRectangle([["0","0","1"],["1","1","1"]])) // 3
-// console.log(maximalRectangle([["0", "0", "1", "1"], ["0", "1", "1", "1"], ["0", "1", "1", "1"], ["1", "1", "1", "1"]])) // 9
