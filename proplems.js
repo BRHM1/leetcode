@@ -1,3 +1,9 @@
+function TreeNode(val, left, right) {
+    this.val = (val === undefined ? 0 : val)
+    this.left = (left === undefined ? null : left)
+    this.right = (right === undefined ? null : right)
+}
+
 var deckRevealedIncreasing = function (deck) {
     const res = Array(deck.length)
     const queue = Array(deck.length)
@@ -68,19 +74,19 @@ var maximalRectangle = function (matrix) {
     // if there is a zero it makes the total col = 0
     let max = 0
     let histogram_arr = Array(matrix.length).fill().map(() => Array(matrix[0].length))
-    for(let r = 0; r < matrix.length; r++){
-        for(let c = 0; c < matrix[0].length; c++){
-            if(r === 0){
+    for (let r = 0; r < matrix.length; r++) {
+        for (let c = 0; c < matrix[0].length; c++) {
+            if (r === 0) {
                 histogram_arr[r][c] = +matrix[r][c]
-            }else if(matrix[r][c] === "0"){
+            } else if (matrix[r][c] === "0") {
                 histogram_arr[r][c] = 0
-            }else {
+            } else {
                 histogram_arr[r][c] = +histogram_arr[r - 1][c] + 1
             }
         }
     }
-    for(let histogram of histogram_arr){
-        max = Math.max(max , largestRectangleArea(histogram))
+    for (let histogram of histogram_arr) {
+        max = Math.max(max, largestRectangleArea(histogram))
     }
     return max
 };
@@ -88,20 +94,35 @@ var maximalRectangle = function (matrix) {
 const largestRectangleArea2 = (histogram) => {
     let maxArea = 0
     let stack = [] // [starting index , height]
-    for(let i = 0; i < histogram.length; i++){
+    for (let i = 0; i < histogram.length; i++) {
         let start = i
-        while(stack.length && stack.at(-1)[1] > histogram[i]){ // it means i can't extend it further more 
-            let [index , height] = stack.pop()
-            maxArea = Math.max(maxArea , (i - index) * height)
+        while (stack.length && stack.at(-1)[1] > histogram[i]) { // it means i can't extend it further more 
+            let [index, height] = stack.pop()
+            maxArea = Math.max(maxArea, (i - index) * height)
             // the popped one is bigger than the current one , it means i can extend the current one to the left direction
             // so i made the start of the current one === to the index i just popped
             start = index
-        } 
-        stack.push([start , histogram[i]])
+        }
+        stack.push([start, histogram[i]])
     }
     // may be some element's left in the stack (those who made it to the end of the histogram)
-    for(let [index , height] of stack){
-        maxArea = Math.max(maxArea , (histogram.length - index) * height)
+    for (let [index, height] of stack) {
+        maxArea = Math.max(maxArea, (histogram.length - index) * height)
     }
     return maxArea
 }
+
+var sumOfLeftLeaves = function(root) {
+    let sum = 0
+    const helper = (node , key) => {
+        if(!node) return 0
+        if(!node.left && !node.right && key) sum += node.val
+        helper(node.left , true)
+        helper(node.right , false)
+    }
+    helper(root , false)
+    return sum
+};
+
+const tree = new TreeNode(3 , new TreeNode(9) , new TreeNode(20 , new TreeNode(15) , new TreeNode(7)) )
+console.log(sumOfLeftLeaves(tree))
