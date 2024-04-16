@@ -133,7 +133,25 @@ var sumNumbers = function (root, current = 0) {
     return sum
 };
 
-const tree = new TreeNode(4, new TreeNode(9, new TreeNode(5), new TreeNode(1)), new TreeNode(0))
-// const tree = new TreeNode(1 , new TreeNode(2) , new TreeNode(3) )
-console.log(sumNumbers(tree))
+var addOneRow = function (root, val, depth) {
+    if (!root) return;
+    if (depth === 2) {
+        let oldLeft = root.left
+        let oldRight = root.right
+        root.left = new TreeNode(val, oldLeft, null)
+        root.right = new TreeNode(val, null, oldRight)
+        return root
+    }
+    if (depth === 1) {
+        const node = new TreeNode(val, root)
+        return node
+    }
+    root.left = addOneRow(root.left, val, depth - 1)
+    root.right = addOneRow(root.right, val, depth - 1)
+    return root;
+};
+
+const tree = new TreeNode(4, new TreeNode(2, new TreeNode(3), new TreeNode(1)), new TreeNode(6, new TreeNode(5)))
+// const tree = new TreeNode(4 , new TreeNode(2 , new TreeNode(3) , new TreeNode(1)))
+console.log(addOneRow(tree, 1, 2))
 
