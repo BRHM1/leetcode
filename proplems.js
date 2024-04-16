@@ -112,17 +112,28 @@ const largestRectangleArea2 = (histogram) => {
     return maxArea
 }
 
-var sumOfLeftLeaves = function(root) {
+var sumOfLeftLeaves = function (root) {
     let sum = 0
-    const helper = (node , key) => {
-        if(!node) return 0
-        if(!node.left && !node.right && key) sum += node.val
-        helper(node.left , true)
-        helper(node.right , false)
+    const helper = (node, key) => {
+        if (!node) return 0
+        if (!node.left && !node.right && key) sum += node.val
+        helper(node.left, true)
+        helper(node.right, false)
     }
-    helper(root , false)
+    helper(root, false)
     return sum
 };
 
-const tree = new TreeNode(3 , new TreeNode(9) , new TreeNode(20 , new TreeNode(15) , new TreeNode(7)) )
-console.log(sumOfLeftLeaves(tree))
+
+var sumNumbers = function (root, current = 0) {
+    let sum = 0
+    if (!root) return 0
+    if (!root.left && !root.right) sum += +(current * 10 + root.val)
+    sum += sumNumbers(root.left, current * 10 + root.val) + sumNumbers(root.right, current * 10 + root.val)
+    return sum
+};
+
+const tree = new TreeNode(4, new TreeNode(9, new TreeNode(5), new TreeNode(1)), new TreeNode(0))
+// const tree = new TreeNode(1 , new TreeNode(2) , new TreeNode(3) )
+console.log(sumNumbers(tree))
+
