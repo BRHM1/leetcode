@@ -1,1 +1,1 @@
-1 , 2,3
+smallest.split(',').reverse().join('')

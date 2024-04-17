@@ -151,7 +151,22 @@ var addOneRow = function (root, val, depth) {
     return root;
 };
 
-const tree = new TreeNode(4, new TreeNode(2, new TreeNode(3), new TreeNode(1)), new TreeNode(6, new TreeNode(5)))
-// const tree = new TreeNode(4 , new TreeNode(2 , new TreeNode(3) , new TreeNode(1)))
-console.log(addOneRow(tree, 1, 2))
+
+var smallestFromLeaf = function (root) {
+    let smallest = "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
+    const helper = (node, current) => {
+        if (!node) return
+        if (!node.left && !node.right) {
+            smallest = String.fromCharCode(97 + +node.val) + current >  smallest ? smallest : String.fromCharCode(97 + +node.val) + current
+            return
+        }
+        helper(node.left, String.fromCharCode(97 + +node.val) + current)
+        helper(node.right, String.fromCharCode(97 + +node.val) + current)
+    }
+    helper(root, "")
+    return smallest
+};
+
+const tree = new TreeNode(25, new TreeNode(25, new TreeNode(25), new TreeNode(0)), new TreeNode(0, new TreeNode(0), new TreeNode(2)))
+console.log(smallestFromLeaf(tree))
 
