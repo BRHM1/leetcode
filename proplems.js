@@ -157,7 +157,7 @@ var smallestFromLeaf = function (root) {
     const helper = (node, current) => {
         if (!node) return
         if (!node.left && !node.right) {
-            smallest = String.fromCharCode(97 + +node.val) + current >  smallest ? smallest : String.fromCharCode(97 + +node.val) + current
+            smallest = String.fromCharCode(97 + +node.val) + current > smallest ? smallest : String.fromCharCode(97 + +node.val) + current
             return
         }
         helper(node.left, String.fromCharCode(97 + +node.val) + current)
@@ -167,6 +167,21 @@ var smallestFromLeaf = function (root) {
     return smallest
 };
 
-const tree = new TreeNode(25, new TreeNode(25, new TreeNode(25), new TreeNode(0)), new TreeNode(0, new TreeNode(0), new TreeNode(2)))
-console.log(smallestFromLeaf(tree))
-
+var islandPerimeter = function (grid) {
+    let res = 0
+    for (let row = 0; row < grid.length; row++) {
+        for (let col = 0; col < grid[0].length; col++) {
+            if (grid[row][col] === 1) {
+                // look at the four directions if the neighbor is land increment the res by 1
+                res += 4
+                if (row !== 0) res -= grid[row - 1][col] === 1 ? 1 : 0
+                if (row !== grid.length - 1) res -= grid[row + 1][col] === 1 ? 1 : 0
+                if (col !== 0) res -= grid[row][col - 1] === 1 ? 1 : 0
+                if (col !== grid[0].length - 1) res -= grid[row][col + 1] === 1 ? 1 : 0
+            }
+        }
+    }
+    return res
+};
+console.log(islandPerimeter([[0, 1, 0, 0], [1, 1, 1, 0], [0, 1, 0, 0], [1, 1, 0, 0]]))
+console.log(islandPerimeter([[1 , 1 , 1]]))
