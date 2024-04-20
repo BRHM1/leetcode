@@ -186,22 +186,61 @@ var islandPerimeter = function (grid) {
 
 var numIslands = function (grid) {
     let res = 0
-    const dfs = (r , c) => {
-        if(r < 0 || r >= grid.length || c < 0 || c >= grid[0].length) return 0
-        if(grid[r][c] === "0") return 0
+    const dfs = (r, c) => {
+        if (r < 0 || r >= grid.length || c < 0 || c >= grid[0].length) return 0
+        if (grid[r][c] === "0") return 0
 
         grid[r][c] = "0"
 
-        dfs(r + 1 , c)
-        dfs(r - 1 , c)
-        dfs(r , c + 1)
-        dfs(r , c - 1)
+        dfs(r + 1, c)
+        dfs(r - 1, c)
+        dfs(r, c + 1)
+        dfs(r, c - 1)
         return 1
     }
     for (let r = 0; r < grid.length; r++) {
         for (let c = 0; c < grid[0].length; c++) {
-            if(grid[r][c] === "1") res += dfs(r , c)
+            if (grid[r][c] === "1") res += dfs(r, c)
         }
     }
     return res
 };
+
+
+var findFarmland = function (land) {
+    const res = []
+    const ROWS = land.length , COLS = land[0].length
+    const dfs = (r, c , edges) => {
+        if(r < 0 || r >= ROWS || c < 0 || c >= COLS) return true;
+        if(land[r][c] === 0) return true
+        if(land[r][c] === null) return false
+
+        land[r][c] = null
+        let isRightEdge = dfs(r + 1 , c , edges)
+        let isDownEdge = dfs(r , c + 1 , edges)
+
+        if(isDownEdge && isRightEdge){
+            edges.row = r
+            edges.col = c
+        }
+    }
+    for (let i = 0; i < land.length; i++) {
+        for (let j = 0; j < land[0].length; j++) {
+            if (land[i][j] !== 1) continue
+            const edges = {row : null , col : null}
+            dfs(i , j , edges)
+            let subResult = [i, j, edges.row , edges.col]
+            res.push(subResult)
+        }
+    }
+    return res
+};
+
+console.log(findFarmland([[1, 0, 0], [0, 1, 1], [0, 1, 1]])) // [[0,0,0,0] , [1,1,2,2]]
+// console.log(findFarmland([[0, 0, 0], [0, 1, 1], [0, 1, 1]])) // [1,1,2,2]]
+// console.log(findFarmland([[1, 1, 1], [1, 1, 1], [1, 1, 1]])) // [ [0,0,2,2]]
+// console.log(findFarmland([[1, 1], [1, 1]])) // [[0,0,1,1]]
+// console.log(findFarmland([[0]])) // []
+console.log(findFarmland([[0,1],[1,0]])) // [[0,1,0,1],[1,0,1,0]]
+console.log(findFarmland([[1,1],[0,0]])) // [[0,1,0,1],[1,0,1,0]]
+

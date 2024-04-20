@@ -1,1 +1,1 @@
-smallest.split(',').reverse().join('')
+first
