@@ -262,19 +262,29 @@ var findFarmland = function (land) {
 // };
 
 class UnionFind {
-    parent = []
-    constructor(parent){
-        this.parent = parent
+    parent = new Map()
+    edges = []
+    constructor(n, edges){
+        this.parent = new Map(Array.from(Array(n).keys()).map(i => [i , i]))
+        this.edges = edges
     }
     find(node){ // returns the representive of the group for a specific node
-        if(this.parent[node] !== node) {
-            return this.find(parent[node])
-        }else {
-            return node
+        let root = node
+        while(root !== this.parent.get(root)){
+            root = this.parent.get(root)
         }
+        return root
     }
     union(group1 , group2) {
-       return this.parent[group1] = find(group2)
+        let group1Representive = this.find(group1)
+        let group2Representive = this.find(group2)
+        this.parent.set(group1Representive , group2Representive)
+    }
+    populate() {
+        for(let [src , des] of this.edges){
+            this.union(src , des)
+        }
+        return this.parent
     }
 }
 
@@ -300,5 +310,4 @@ const validPath = (n , edges , source , destination) => {
     }
     return isConnected(source , destination)
 }
-console.log(validPath(3 , [[0,1],[1,2],[2,0]] , 0 , 2))
 
