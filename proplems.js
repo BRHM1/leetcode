@@ -209,17 +209,18 @@ var numIslands = function (grid) {
 
 var findFarmland = function (land) {
     const res = []
-    const ROWS = land.length , COLS = land[0].length
-    const dfs = (r, c , edges) => {
-        if(r < 0 || r >= ROWS || c < 0 || c >= COLS) return true;
-        if(land[r][c] === 0) return true
-        if(land[r][c] === null) return false
+    const ROWS = land.length, COLS = land[0].length
+
+    const dfs = (r, c, edges) => {
+        if (r < 0 || r >= ROWS || c < 0 || c >= COLS) return true;
+        if (land[r][c] === 0) return true
+        if (land[r][c] === null) return false
 
         land[r][c] = null
-        let isRightEdge = dfs(r + 1 , c , edges)
-        let isDownEdge = dfs(r , c + 1 , edges)
+        let isRightEdge = dfs(r + 1, c, edges)
+        let isDownEdge = dfs(r, c + 1, edges)
 
-        if(isDownEdge && isRightEdge){
+        if (isDownEdge && isRightEdge) {
             edges.row = r
             edges.col = c
         }
@@ -227,20 +228,37 @@ var findFarmland = function (land) {
     for (let i = 0; i < land.length; i++) {
         for (let j = 0; j < land[0].length; j++) {
             if (land[i][j] !== 1) continue
-            const edges = {row : null , col : null}
-            dfs(i , j , edges)
-            let subResult = [i, j, edges.row , edges.col]
+            const edges = { row: null, col: null }
+            dfs(i, j, edges)
+            let subResult = [i, j, edges.row, edges.col]
             res.push(subResult)
         }
     }
     return res
+}
+
+var validPath = function (n, edges, source, destination) {
+    const adjacencyList = {}
+    if(source === destination) return true
+    if(!edges.length) return false
+    for (let [src, dis] of edges) {
+        adjacencyList[src] = adjacencyList[src] ? [...adjacencyList[src], dis] : [dis]
+        adjacencyList[dis] = adjacencyList[dis] ? [...adjacencyList[dis], src] : [src]
+    }
+    // apply bfs to find if a path exists
+    const queue = [source]
+    const visited = new Set()
+    while (queue.length) {
+        let current = queue.shift()
+        for (let neighbor of adjacencyList[current]) {
+            if (neighbor === destination) return true
+            if (!visited.has(neighbor)) {
+                queue.push(neighbor)
+                visited.add(neighbor)
+            }
+        }
+    }
+    return false
 };
-
-console.log(findFarmland([[1, 0, 0], [0, 1, 1], [0, 1, 1]])) // [[0,0,0,0] , [1,1,2,2]]
-// console.log(findFarmland([[0, 0, 0], [0, 1, 1], [0, 1, 1]])) // [1,1,2,2]]
-// console.log(findFarmland([[1, 1, 1], [1, 1, 1], [1, 1, 1]])) // [ [0,0,2,2]]
-// console.log(findFarmland([[1, 1], [1, 1]])) // [[0,0,1,1]]
-// console.log(findFarmland([[0]])) // []
-console.log(findFarmland([[0,1],[1,0]])) // [[0,1,0,1],[1,0,1,0]]
-console.log(findFarmland([[1,1],[0,0]])) // [[0,1,0,1],[1,0,1,0]]
-
+console.log(validPath(3, [[0, 1], [1, 2], [2, 0]], 0, 2))
+console.log(validPath(6, [[0, 1], [0, 2], [3, 5], [5, 4], [4, 3]], 0, 5))
