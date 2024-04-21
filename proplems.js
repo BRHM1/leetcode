@@ -237,28 +237,68 @@ var findFarmland = function (land) {
     return res
 }
 
-var validPath = function (n, edges, source, destination) {
-    const adjacencyList = {}
-    if(source === destination) return true
-    if(!edges.length) return false
-    for (let [src, dis] of edges) {
-        adjacencyList[src] = adjacencyList[src] ? [...adjacencyList[src], dis] : [dis]
-        adjacencyList[dis] = adjacencyList[dis] ? [...adjacencyList[dis], src] : [src]
+// var validPath = function (n, edges, source, destination) {
+//     const adjacencyList = {}
+//     if(source === destination) return true
+//     if(!edges.length) return false
+//     for (let [src, dis] of edges) {
+//         adjacencyList[src] = adjacencyList[src] ? [...adjacencyList[src], dis] : [dis]
+//         adjacencyList[dis] = adjacencyList[dis] ? [...adjacencyList[dis], src] : [src]
+//     }
+//     // apply bfs to find if a path exists
+//     const queue = [source]
+//     const visited = new Set()
+//     while (queue.length) {
+//         let current = queue.shift()
+//         for (let neighbor of adjacencyList[current]) {
+//             if (neighbor === destination) return true
+//             if (!visited.has(neighbor)) {
+//                 queue.push(neighbor)
+//                 visited.add(neighbor)
+//             }
+//         }
+//     }
+//     return false
+// };
+
+class UnionFind {
+    parent = []
+    constructor(parent){
+        this.parent = parent
     }
-    // apply bfs to find if a path exists
-    const queue = [source]
-    const visited = new Set()
-    while (queue.length) {
-        let current = queue.shift()
-        for (let neighbor of adjacencyList[current]) {
-            if (neighbor === destination) return true
-            if (!visited.has(neighbor)) {
-                queue.push(neighbor)
-                visited.add(neighbor)
-            }
+    find(node){ // returns the representive of the group for a specific node
+        if(this.parent[node] !== node) {
+            return this.find(parent[node])
+        }else {
+            return node
         }
     }
-    return false
-};
-console.log(validPath(3, [[0, 1], [1, 2], [2, 0]], 0, 2))
-console.log(validPath(6, [[0, 1], [0, 2], [3, 5], [5, 4], [4, 3]], 0, 5))
+    union(group1 , group2) {
+       return this.parent[group1] = find(group2)
+    }
+}
+
+const validPath = (n , edges , source , destination) => {
+    const nodes = new Map(Array.from(Array(n).keys()).map(i => [i , i])) // make each node is the parent(representive) of itself
+    const find = (node) => { // find's the representive of the input node 
+        let root = node
+        while(root !== nodes.get(root)){
+            root = nodes.get(root)
+        }
+        return root
+    }
+    const union = (firstNode , secondNode) => { // group's two trees together under one root 
+        let firstNodeRoot = find(firstNode)
+        let secondNodeRoot = find(secondNode)
+        nodes.set(firstNodeRoot , secondNodeRoot)
+    }
+    const isConnected = (first , second) => {
+        return find(first) === find(second)
+    }
+    for(let [src , des] of edges) {
+        union(src , des)
+    }
+    return isConnected(source , destination)
+}
+console.log(validPath(3 , [[0,1],[1,2],[2,0]] , 0 , 2))
+
