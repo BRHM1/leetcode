@@ -264,50 +264,76 @@ var findFarmland = function (land) {
 class UnionFind {
     parent = new Map()
     edges = []
-    constructor(n, edges){
-        this.parent = new Map(Array.from(Array(n).keys()).map(i => [i , i]))
+    constructor(n, edges) {
+        this.parent = new Map(Array.from(Array(n).keys()).map(i => [i, i]))
         this.edges = edges
     }
-    find(node){ // returns the representive of the group for a specific node
+    find(node) { // returns the representive of the group for a specific node
         let root = node
-        while(root !== this.parent.get(root)){
+        while (root !== this.parent.get(root)) {
             root = this.parent.get(root)
         }
         return root
     }
-    union(group1 , group2) {
+    union(group1, group2) {
         let group1Representive = this.find(group1)
         let group2Representive = this.find(group2)
-        this.parent.set(group1Representive , group2Representive)
+        this.parent.set(group1Representive, group2Representive)
     }
     populate() {
-        for(let [src , des] of this.edges){
-            this.union(src , des)
+        for (let [src, des] of this.edges) {
+            this.union(src, des)
         }
         return this.parent
     }
 }
 
-const validPath = (n , edges , source , destination) => {
-    const nodes = new Map(Array.from(Array(n).keys()).map(i => [i , i])) // make each node is the parent(representive) of itself
+const validPath = (n, edges, source, destination) => {
+    const nodes = new Map(Array.from(Array(n).keys()).map(i => [i, i])) // make each node is the parent(representive) of itself
     const find = (node) => { // find's the representive of the input node 
         let root = node
-        while(root !== nodes.get(root)){
+        while (root !== nodes.get(root)) {
             root = nodes.get(root)
         }
         return root
     }
-    const union = (firstNode , secondNode) => { // group's two trees together under one root 
+    const union = (firstNode, secondNode) => { // group's two trees together under one root 
         let firstNodeRoot = find(firstNode)
         let secondNodeRoot = find(secondNode)
-        nodes.set(firstNodeRoot , secondNodeRoot)
+        nodes.set(firstNodeRoot, secondNodeRoot)
     }
-    const isConnected = (first , second) => {
+    const isConnected = (first, second) => {
         return find(first) === find(second)
     }
-    for(let [src , des] of edges) {
-        union(src , des)
+    for (let [src, des] of edges) {
+        union(src, des)
     }
-    return isConnected(source , destination)
+    return isConnected(source, destination)
 }
 
+var openLock = function (deadends, target) {
+    const queue = [["0000", 0]]
+    const dead = new Set(deadends)
+    const visited = new Set(deadends)
+
+    while (queue.length) {
+        let [num, minMoves] = queue.shift()
+        if (num === target) return minMoves
+        if (dead.has(num)) continue
+        for (let neighbor of generateNeighbors(num)) {
+            if (!visited.has(neighbor)) {
+                visited.add(neighbor)
+                queue.push([neighbor, minMoves + 1])
+            }
+        }
+    }
+    function generateNeighbors(num) {
+        const res = []
+        for (let i = 0; i < num.length; i++) {
+            res.push(num.slice(0, i) + ((+num[i] + 1) % 10) + num.slice(i + 1))
+            res.push(num.slice(0, i) + ((+num[i] + 9) % 10) + num.slice(i + 1))
+        }
+        return res
+    }
+    return -1
+};
