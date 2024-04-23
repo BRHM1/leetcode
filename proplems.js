@@ -344,34 +344,81 @@ var findMinHeightTrees = function (n, edges) {
     const adj = {}
     const edges_count = {}
     const leaves = [] // queue
-    if(edges.length === 0) return [0]
-    for(let [src , des] of edges){
-        adj[src] = adj[src] ? [...adj[src] , des] : [des]
-        adj[des] = adj[des] ? [...adj[des] , src] : [src]
+    if (edges.length === 0) return [0]
+    for (let [src, des] of edges) {
+        adj[src] = adj[src] ? [...adj[src], des] : [des]
+        adj[des] = adj[des] ? [...adj[des], src] : [src]
     }
-    for(let node in adj){
+    for (let node in adj) {
         let neighbors = adj[node]
-        if(neighbors.length === 1) leaves.push(node)
+        if (neighbors.length === 1) leaves.push(node)
         edges_count[node] = neighbors.length
     }
-    while(leaves.length){
+    while (leaves.length) {
         let len = leaves.length
-        if(n <= 2){
+        if (n <= 2) {
             return leaves
         }
-        for(let i = 0; i < len; i++){
+        for (let i = 0; i < len; i++) {
             let node = leaves.shift()
             n -= 1
-            for(let neighbor of adj[node]){
+            for (let neighbor of adj[node]) {
                 console.log(neighbor)
                 edges_count[neighbor] -= 1
-                if(edges_count[neighbor] === 1) leaves.push(neighbor)
+                if (edges_count[neighbor] === 1) leaves.push(neighbor)
             }
         }
     }
     return leaves
 };
 
-console.log(findMinHeightTrees(4, [[1, 0], [1, 2], [1, 3]]))
-console.log(findMinHeightTrees(6, [[3, 0], [3, 1], [3, 2], [3, 4], [5, 4]]))
-// console.log(findMinHeightTrees(6 , []))
+var findMinHeightTrees2 = (n, edges) => {
+    let furthest = 0
+    let height = 0
+    const adj = new Map()
+    let path = []
+    if(!edges.length) return [0]
+    for (let [src, des] of edges) {
+        adj[src] = adj[src] ? [...adj[src], des] : [des]
+        adj[des] = adj[des] ? [...adj[des], src] : [src]
+    }
+    let visited = new Set()
+    const dfs = (root, depth , goal) => {
+        if(root === goal) return [...path, root]
+        if (root === undefined || visited.has(root)) return []
+        if (depth > height) {
+            height = depth
+            furthest = root
+        }
+        visited.add(root)
+        path.push(root)
+        for(let neighbor of adj[root]){
+            const result = dfs(neighbor , depth + 1 , goal)
+            if(result.length > 0) return result
+        }
+        path.pop(root)
+        return []
+    }
+    
+    
+    dfs(Math.floor(Math.random() * 10) % n , 0 , Infinity)
+    let src = furthest
+    visited = new Set()
+    height = 0
+    
+    dfs(furthest , 0 , Infinity)
+    let des = furthest
+    visited = new Set()
+    height = 0
+    console.log(src , des)
+    let p = dfs(src , 0 , des)
+    while(p.length > 2){
+        p.shift()
+        p.pop()
+    }
+    return p
+}
+console.log(findMinHeightTrees2(4, [[1, 0], [1, 2], [1, 3]]))
+console.log(findMinHeightTrees2(6, [[3, 0], [3, 1], [3, 2], [3, 4], [5, 4]]))
+console.log(findMinHeightTrees2(6 , []))
+console.log(findMinHeightTrees2(8, [[0, 1], [0, 2], [0, 3], [0, 4], [0, 6], [6, 7], [4, 5]]))
