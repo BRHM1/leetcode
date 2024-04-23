@@ -377,14 +377,14 @@ var findMinHeightTrees2 = (n, edges) => {
     let height = 0
     const adj = new Map()
     let path = []
-    if(!edges.length) return [0]
+    if (!edges.length) return [0]
     for (let [src, des] of edges) {
         adj[src] = adj[src] ? [...adj[src], des] : [des]
         adj[des] = adj[des] ? [...adj[des], src] : [src]
     }
     let visited = new Set()
-    const dfs = (root, depth , goal) => {
-        if(root === goal) return [...path, root]
+    const dfs = (root, depth, goal) => {
+        if (root === goal) return [...path, root]
         if (root === undefined || visited.has(root)) return []
         if (depth > height) {
             height = depth
@@ -392,33 +392,46 @@ var findMinHeightTrees2 = (n, edges) => {
         }
         visited.add(root)
         path.push(root)
-        for(let neighbor of adj[root]){
-            const result = dfs(neighbor , depth + 1 , goal)
-            if(result.length > 0) return result
+        for (let neighbor of adj[root]) {
+            const result = dfs(neighbor, depth + 1, goal)
+            if (result.length > 0) return result
         }
         path.pop(root)
         return []
     }
-    
-    
-    dfs(Math.floor(Math.random() * 10) % n , 0 , Infinity)
+
+
+    dfs(Math.floor(Math.random() * 10) % n, 0, Infinity)
     let src = furthest
     visited = new Set()
     height = 0
-    
-    dfs(furthest , 0 , Infinity)
+
+    dfs(furthest, 0, Infinity)
     let des = furthest
     visited = new Set()
     height = 0
-    console.log(src , des)
-    let p = dfs(src , 0 , des)
-    while(p.length > 2){
+    console.log(src, des)
+    let p = dfs(src, 0, des)
+    while (p.length > 2) {
         p.shift()
         p.pop()
     }
     return p
 }
-console.log(findMinHeightTrees2(4, [[1, 0], [1, 2], [1, 3]]))
-console.log(findMinHeightTrees2(6, [[3, 0], [3, 1], [3, 2], [3, 4], [5, 4]]))
-console.log(findMinHeightTrees2(6 , []))
-console.log(findMinHeightTrees2(8, [[0, 1], [0, 2], [0, 3], [0, 4], [0, 6], [6, 7], [4, 5]]))
+
+var combinationSum = function (candidates, target) {
+    let res = []
+    const dfs = (curSum, curPath , candidates) => {
+        if (curSum > target) return
+        if (curSum === target) return 1 && res.push([...curPath])
+        for (let i = 0; i < candidates.length; i++) {
+            curPath.push(candidates[i])
+            dfs(curSum + candidates[i], curPath , candidates.slice(i))
+            curPath.pop()
+        }
+    }
+    dfs(0, [] , candidates)
+    return res
+};
+console.log(combinationSum([2, 3, 6, 7], 7)) // [[2,2,3] , [7]]
+console.log(combinationSum([2, 3, 5], 8)) // [[2,2,2,2] , [2,3,3] , [3,5]]
