@@ -421,17 +421,36 @@ var findMinHeightTrees2 = (n, edges) => {
 
 var combinationSum = function (candidates, target) {
     let res = []
-    const dfs = (curSum, curPath , candidates) => {
+    const dfs = (curSum, curPath, candidates) => {
         if (curSum > target) return
         if (curSum === target) return 1 && res.push([...curPath])
         for (let i = 0; i < candidates.length; i++) {
             curPath.push(candidates[i])
-            dfs(curSum + candidates[i], curPath , candidates.slice(i))
+            dfs(curSum + candidates[i], curPath, candidates.slice(i))
             curPath.pop()
         }
     }
-    dfs(0, [] , candidates)
+    dfs(0, [], candidates)
     return res
 };
-console.log(combinationSum([2, 3, 6, 7], 7)) // [[2,2,3] , [7]]
-console.log(combinationSum([2, 3, 5], 8)) // [[2,2,2,2] , [2,3,3] , [3,5]]
+
+var combinationSum2 = function (candidates, target) {
+    const res = []
+    candidates.sort((a, b) => a - b)
+    const dfs = (cur, index, target) => {
+        if (target < 0) return
+        if (0 === target) return 1 && res.push([...cur])
+        let prev = -1
+        for (let i = index; i < candidates.length; i++) {
+            if (candidates[i] === prev) continue
+            cur.push(candidates[i])
+            dfs(cur, i + 1,target - candidates[i])
+            cur.pop()
+            prev = candidates[i]
+        }
+    }
+    dfs([], 0, target)
+    return res
+};
+console.log(combinationSum2([2, 5, 2, 1, 2], 5)) // [[2,2,3] , [7]]
+console.log(combinationSum2([10, 1, 2, 7, 6, 1, 5], 8)) // [[2,2,2,2] , [2,3,3] , [3,5]]
