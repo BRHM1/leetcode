@@ -337,3 +337,41 @@ var openLock = function (deadends, target) {
     }
     return -1
 };
+
+
+var findMinHeightTrees = function (n, edges) {
+    // intiution : remove the leaf nodes 
+    const adj = {}
+    const edges_count = {}
+    const leaves = [] // queue
+    if(edges.length === 0) return [0]
+    for(let [src , des] of edges){
+        adj[src] = adj[src] ? [...adj[src] , des] : [des]
+        adj[des] = adj[des] ? [...adj[des] , src] : [src]
+    }
+    for(let node in adj){
+        let neighbors = adj[node]
+        if(neighbors.length === 1) leaves.push(node)
+        edges_count[node] = neighbors.length
+    }
+    while(leaves.length){
+        let len = leaves.length
+        if(n <= 2){
+            return leaves
+        }
+        for(let i = 0; i < len; i++){
+            let node = leaves.shift()
+            n -= 1
+            for(let neighbor of adj[node]){
+                console.log(neighbor)
+                edges_count[neighbor] -= 1
+                if(edges_count[neighbor] === 1) leaves.push(neighbor)
+            }
+        }
+    }
+    return leaves
+};
+
+console.log(findMinHeightTrees(4, [[1, 0], [1, 2], [1, 3]]))
+console.log(findMinHeightTrees(6, [[3, 0], [3, 1], [3, 2], [3, 4], [5, 4]]))
+// console.log(findMinHeightTrees(6 , []))
