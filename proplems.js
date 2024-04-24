@@ -481,6 +481,24 @@ var subsets = function(nums) {
     return res
 };
 
+var subsetsWithDup = function(nums) {
+    let res = [[]]
+    nums.sort((a , b) => a - b)
+    const backtrack = (numbers , subset) => {
+        if(!numbers.length) return
+        let prev = null
+        for(let i = 0; i < numbers.length; i++){
+            if(numbers[i] == prev) continue
+            subset.push(numbers[i])
+            res.push([...subset])
+            backtrack(numbers.slice(i + 1) , subset)
+            subset.pop(numbers[i])
+            prev = numbers[i]
+        }
+    }
+    backtrack( nums , [])
+    return res
+};
 
-console.log(subsets([1,2,3]))
-console.log(subsets([0]))
+console.log(subsetsWithDup([1,2,2]))
+console.log(subsetsWithDup([0]))
