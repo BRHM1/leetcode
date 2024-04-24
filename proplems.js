@@ -452,5 +452,19 @@ var combinationSum2 = function (candidates, target) {
     dfs([], 0, target)
     return res
 };
-console.log(combinationSum2([2, 5, 2, 1, 2], 5)) // [[2,2,3] , [7]]
-console.log(combinationSum2([10, 1, 2, 7, 6, 1, 5], 8)) // [[2,2,2,2] , [2,3,3] , [3,5]]
+
+
+var tribonacci = function(n) {
+    let f = 0, s = 1, t = 1
+    if(n === 0) return 0
+    for(let i = 2; i < n; i++){
+        let temp = f + s + t
+        f = s
+        s = t
+        t = temp
+    }
+    return t
+};
+
+console.log(tribonacci(4))
+console.log(tribonacci(25))
