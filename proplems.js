@@ -466,5 +466,21 @@ var tribonacci = function(n) {
     return t
 };
 
-console.log(tribonacci(4))
-console.log(tribonacci(25))
+var subsets = function(nums) {
+    const res = [[]]
+    const helper = (subset , nums) => {
+        if(!nums.length) return []
+        for(let i = 0; i < nums.length; i++){
+            subset.push(nums[i])
+            res.push([...subset])
+            helper(subset ,nums.slice(i + 1))
+            subset.pop()
+        }
+    }
+    helper([] , nums)
+    return res
+};
+
+
+console.log(subsets([1,2,3]))
+console.log(subsets([0]))
