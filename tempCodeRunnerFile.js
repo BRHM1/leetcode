@@ -1,1 +1,1 @@
-root
+max.set(s[i] , dp[i] || 1)

@@ -444,7 +444,7 @@ var combinationSum2 = function (candidates, target) {
         for (let i = index; i < candidates.length; i++) {
             if (candidates[i] === prev) continue
             cur.push(candidates[i])
-            dfs(cur, i + 1,target - candidates[i])
+            dfs(cur, i + 1, target - candidates[i])
             cur.pop()
             prev = candidates[i]
         }
@@ -454,10 +454,10 @@ var combinationSum2 = function (candidates, target) {
 };
 
 
-var tribonacci = function(n) {
+var tribonacci = function (n) {
     let f = 0, s = 1, t = 1
-    if(n === 0) return 0
-    for(let i = 2; i < n; i++){
+    if (n === 0) return 0
+    for (let i = 2; i < n; i++) {
         let temp = f + s + t
         f = s
         s = t
@@ -466,39 +466,88 @@ var tribonacci = function(n) {
     return t
 };
 
-var subsets = function(nums) {
+var subsets = function (nums) {
     const res = [[]]
-    const helper = (subset , nums) => {
-        if(!nums.length) return []
-        for(let i = 0; i < nums.length; i++){
+    const helper = (subset, nums) => {
+        if (!nums.length) return []
+        for (let i = 0; i < nums.length; i++) {
             subset.push(nums[i])
             res.push([...subset])
-            helper(subset ,nums.slice(i + 1))
+            helper(subset, nums.slice(i + 1))
             subset.pop()
         }
     }
-    helper([] , nums)
+    helper([], nums)
     return res
 };
 
-var subsetsWithDup = function(nums) {
+var subsetsWithDup = function (nums) {
     let res = [[]]
-    nums.sort((a , b) => a - b)
-    const backtrack = (numbers , subset) => {
-        if(!numbers.length) return
+    nums.sort((a, b) => a - b)
+
+    const backtrack = (index, subset) => {
+        if (index >= nums.length) return
         let prev = null
-        for(let i = 0; i < numbers.length; i++){
-            if(numbers[i] == prev) continue
-            subset.push(numbers[i])
+        for (let i = index; i < nums.length; i++) {
+            if (nums[i] == prev) continue
+            subset.push(nums[i])
             res.push([...subset])
-            backtrack(numbers.slice(i + 1) , subset)
-            subset.pop(numbers[i])
-            prev = numbers[i]
+            backtrack(i + 1, subset)
+            subset.pop(nums[i])
+            prev = nums[i]
         }
     }
-    backtrack( nums , [])
+    backtrack(0, [])
     return res
 };
 
-console.log(subsetsWithDup([1,2,2]))
-console.log(subsetsWithDup([0]))
+
+// invented new algorithm
+// 1- intialize dp array of length s and fill it with zeros
+// 2- iterate over the string from the right to left 
+// 3- first element from the right has a maximum length of 1 
+//   (because no charachters comes after it so it will be subsequence of length 1) 
+// 4- so we intialize the dp.at(-1) with 1 , max[s.at(-1)] = 1 , onRight = {s.at(-1)}
+// 5- we keep a max hashtable with length 26 (each char assigned to 0 intially) to keep track of what is the longest subsequence from that char till the end of the string
+// 6- keep a set with all elements that found on right to make sure we calculate only the ones we encountered and helping in not clashing with the repeated characters
+// 8- begin from s.length -2 then look to the right => is there a char which asciiDifference(currChar - thatChar) <= k && onRight.has(thatChar) ?
+//    if yes then do the following => dp[i] = Math.max(dp[i] , max[char] + 1) , max[s[i]] = (dp[i] || 1) , onRight.add(s[i])
+// 9- after doing this operation for all the elements on right of s[i]:
+//           1) modify max[s[i]] to be equall to (dp[i] || 1) 
+//           2) onRight.add(s[i])
+//10- keep doing this untill you fill the dp array then pick the maximum
+
+// time = O(26n) => O(n)
+// space = O(s.length + 26 + 26) => O(n)
+
+// EXAMPLE: longestIdealString("abczzzca" , 2) => dp = [5,4,3,3,2,1,2,1]
+    
+
+var longestIdealString = function (s, k) {
+    const dp = Array(s.length).fill(0)
+    dp[dp.length  - 1] = 1
+    let max = new Map(Array.from(Array(26) , (_ , i) => [String.fromCharCode(i + 97) , 0]))
+    const onRight = new Set(s.at(-1))
+    max.set(s[s.length - 1] , 1)
+    for (let i = dp.length - 2; i >= 0; i--) {
+        const asciiForSChar = s[i].charCodeAt(0)
+        for (let [key , value] of max) {
+            const asciiForMaxChar = key.charCodeAt(0)
+            let diff = Math.abs(asciiForMaxChar - asciiForSChar)
+            if (diff <= k && value >= 1 && onRight.has(key)) {
+                dp[i] = Math.max(dp[i] , value + 1)
+            }
+        }
+        max.set(s[i] , dp[i] || 1)
+        onRight.add(s[i])
+    }
+    return dp
+}
+// console.log(longestIdealString("acfgbd", 2)) // 4
+// console.log(longestIdealString("abcd", 3))// 4
+// console.log(longestIdealString("abcz" , 3))// 3
+// console.log(longestIdealString("a" , 0))// 1
+// console.log(longestIdealString("jxhwaysa", 14)) //5
+console.log(longestIdealString("abczhmmca" , 2)) // 6
+
+
