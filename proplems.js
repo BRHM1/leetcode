@@ -521,33 +521,57 @@ var subsetsWithDup = function (nums) {
 // space = O(s.length + 26 + 26) => O(n)
 
 // EXAMPLE: longestIdealString("abczzzca" , 2) => dp = [5,4,3,3,2,1,2,1]
-    
+
 
 var longestIdealString = function (s, k) {
     const dp = Array(s.length).fill(0)
-    dp[dp.length  - 1] = 1
-    let max = new Map(Array.from(Array(26) , (_ , i) => [String.fromCharCode(i + 97) , 0]))
+    dp[dp.length - 1] = 1
+    let max = new Map(Array.from(Array(26), (_, i) => [String.fromCharCode(i + 97), 0]))
     const onRight = new Set(s.at(-1))
-    max.set(s[s.length - 1] , 1)
+    max.set(s[s.length - 1], 1)
     for (let i = dp.length - 2; i >= 0; i--) {
         const asciiForSChar = s[i].charCodeAt(0)
-        for (let [key , value] of max) {
+        for (let [key, value] of max) {
             const asciiForMaxChar = key.charCodeAt(0)
             let diff = Math.abs(asciiForMaxChar - asciiForSChar)
             if (diff <= k && value >= 1 && onRight.has(key)) {
-                dp[i] = Math.max(dp[i] , value + 1)
+                dp[i] = Math.max(dp[i], value + 1)
             }
         }
-        max.set(s[i] , dp[i] || 1)
+        max.set(s[i], dp[i] || 1)
         onRight.add(s[i])
     }
     return dp
 }
-// console.log(longestIdealString("acfgbd", 2)) // 4
-// console.log(longestIdealString("abcd", 3))// 4
-// console.log(longestIdealString("abcz" , 3))// 3
-// console.log(longestIdealString("a" , 0))// 1
-// console.log(longestIdealString("jxhwaysa", 14)) //5
-console.log(longestIdealString("abczhmmca" , 2)) // 6
 
+var minFallingPathSum = function (grid) {
+    // intialize empty grid and fill each row with the minimum it can be (BASE + Math.min(row - 1 && !same column))
+    let ROWS = grid.length, COLS = grid[0].length
+    let dp = Array(COLS).fill(0)
+    const getLowestValues = (arr) => {
+        let lowest = [Infinity, 0], secondLowest = [Infinity, 0]
+        for (let i = 0; i < COLS; i++) {
+            if (arr[i] < lowest[0]){
+                 secondLowest = lowest 
+                 lowest = [arr[i], i]
+                }
+            if (arr[i] > lowest[0] && arr[i] < secondLowest[0]) secondLowest = [arr[i], i]
+            if (arr[i] === lowest[0] && lowest[1] !== i) secondLowest = [arr[i], i]
+        }
+        return [lowest, secondLowest]
+    }
+    let [lowest, secondLowest] = getLowestValues(grid[0])
+    for (let r = 1; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+            if (c !== lowest[1]) {
+                dp[c] = grid[r][c] + lowest[0]
+            } else {
+                dp[c] = grid[r][c] + secondLowest[0]
+            }
+        }
+        [lowest, secondLowest] = getLowestValues(dp)
+        dp = Array(COLS).fill(0)
+    }
+    return lowest[0]
+};
 
