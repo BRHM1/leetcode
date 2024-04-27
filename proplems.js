@@ -551,10 +551,10 @@ var minFallingPathSum = function (grid) {
     const getLowestValues = (arr) => {
         let lowest = [Infinity, 0], secondLowest = [Infinity, 0]
         for (let i = 0; i < COLS; i++) {
-            if (arr[i] < lowest[0]){
-                 secondLowest = lowest 
-                 lowest = [arr[i], i]
-                }
+            if (arr[i] < lowest[0]) {
+                secondLowest = lowest
+                lowest = [arr[i], i]
+            }
             if (arr[i] > lowest[0] && arr[i] < secondLowest[0]) secondLowest = [arr[i], i]
             if (arr[i] === lowest[0] && lowest[1] !== i) secondLowest = [arr[i], i]
         }
@@ -575,3 +575,24 @@ var minFallingPathSum = function (grid) {
     return lowest[0]
 };
 
+
+var findRotateSteps = function (ring, key) {
+    let left = i => i === 0 ? ring.length - 1 : i - 1;
+    let right = i => i === ring.length - 1 ? 0 : i + 1;
+    let dp = ring.split("").map(() => 0);
+
+    for (let i = key.length - 1; i >= 0; i--) {
+        let dp1 = ring.split("").map((x, j) => (x === key[i]) ? dp[j] : Infinity);
+        for (let j = 0; j < ring.length * 2; j++) {
+            let x = j % ring.length;
+            dp1[x] = Math.min(dp1[x], dp1[left(x)] + 1);
+            let y = ((ring.length * 2) - 1 - j) % ring.length;
+            dp1[y] = Math.min(dp1[y], dp1[right(y)] + 1);
+        }
+        dp = dp1;
+    }
+    return dp[0] + key.length;
+};
+console.log(findRotateSteps("godding", "gd")) // 4
+console.log(findRotateSteps("abc", "ac")) // 4
+console.log(findRotateSteps("godding", "godding")) // 13
