@@ -593,6 +593,83 @@ var findRotateSteps = function (ring, key) {
     }
     return dp[0] + key.length;
 };
-console.log(findRotateSteps("godding", "gd")) // 4
-console.log(findRotateSteps("abc", "ac")) // 4
-console.log(findRotateSteps("godding", "godding")) // 13
+
+
+var sumOfDistancesInTree = function (n, edges) {
+    const graph = new Array(n).fill(null).map(() => []);
+    const count = new Array(n).fill(0);
+    const res = new Array(n).fill(0);
+    for (const [u, v] of edges) {
+        graph[u].push(v);
+        graph[v].push(u);
+    }
+    console.log(graph, count)
+
+    const dfs1 = (cur, parent) => {
+        count[cur] = 1;
+        for (const child of graph[cur]) {
+            if (child !== parent) {
+                dfs1(child, cur);
+                count[cur] += count[child];
+                res[cur] += res[child] + count[child];
+            }
+        }
+    };
+
+    const dfs2 = (cur, parent) => {
+        for (const child of graph[cur]) {
+            if (child !== parent) {
+                res[child] = res[cur] + n - 2 * count[child];
+                dfs2(child, cur);
+            }
+        }
+    };
+
+    dfs1(0, -1);
+    dfs2(0, -1);
+
+    return res;
+};
+
+function wonderfulSubstrings(word) {
+    let count = 0;
+    const n = word.length;
+    const freq = new Array(1024).fill(0); // Array to store frequencies of characters
+    freq[0] = 1; // Initialize with an empty substring
+    
+    let bitmask = 0; // Bitmask to represent frequency of characters
+    
+    // Iterate over all characters
+    for (let i = 0; i < n; i++) {
+        const charIndex = word.charCodeAt(i) - 'a'.charCodeAt();
+        bitmask ^= 1 << charIndex; // Toggle the bit for the current character
+        
+        // Increase count for wonderful substrings
+        count += freq[bitmask];
+        
+        // Update frequencies array
+        for (let j = 0; j < 10; j++) {
+            const newBitmask = bitmask ^ (1 << j);
+            count += freq[newBitmask];
+        }
+        
+        freq[bitmask]++;
+    }
+    
+    return count;
+}
+
+const determineSpecificBit = (number , n) => {
+    // this function checks if a specific bit is equall to 0 or 1 by using bitmasking
+    let res = number.toString(2)
+    let bitmask = (1 << (n - 1)).toString(2).padStart(res.length , 0)
+    return (bitmask & res) === 0 ? 0 : 1
+}
+
+var reversePrefix = function(word, ch) {
+    let idx = word.indexOf(ch)
+    let post = word.slice(idx + 1)
+    let reversedPre = word.slice(0 , idx + 1)
+    return idx ? reversedPre.split('').reverse().join('') + post : word
+};
+
