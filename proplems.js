@@ -673,3 +673,14 @@ var reversePrefix = function(word, ch) {
     return idx ? reversedPre.split('').reverse().join('') + post : word
 };
 
+
+var findMaxK = function(nums) {
+    let isFound = new Set(nums)
+    let max = 0
+    for(let num of nums){
+        max = isFound.has(num * -1) ? Math.max(Math.abs(num) , max) : max
+    }
+    return max || -1
+};
+console.log(findMaxK([-1,2,-3,3]))
+// console.log(findMaxK([-1,10,6,7,-7,1]))
