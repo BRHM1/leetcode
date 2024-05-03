@@ -686,25 +686,13 @@ var findMaxK = function (nums) {
 var compareVersion = function (version1, version2) {
     let v1 = version1.split(".")
     let v2 = version2.split(".")
-    let res = 0, diff = v1.length - v2.length
-    while (diff !== 0) {
-        Math.sign(diff) === -1 ? v1.push("0") : v2.push("0")
-        diff > 0 ? diff-- : diff++
+    for(let i = 0; i < Math.max(v1.length , v2.length); i++){
+        let num1 = i < v1.length ? parseInt(v1[i]) : 0
+        let num2 = i < v2.length ? parseInt(v2[i]) : 0
+        if(num1 > num2) return 1
+        if(num1 < num2) return -1
     }
-    console.log(v1 , v2)
-    for (let i = 0; i < Math.min(v1.length, v2.length); i++) {
-        Rev1 = v1[i].padStart(Math.max(v1[i].length, v2[i].length), 0)
-        Rev2 = v2[i].padStart(Math.max(v1[i].length, v2[i].length), 0)
-        // compare the two revs , neglect any leading zeros        
-        for (let j = 0; j < Rev1.length; j++) {
-            if (Rev1[j] < Rev2[j]) {
-                return -1
-            } else if (Rev1[j] > Rev2[j]) {
-                return 1
-            }
-        }
-    }
-    return res
+    return 0
 };
 console.log(compareVersion("1.0", "1.0.1")) // 0
 console.log(compareVersion("1.01", "1.001")) // 0
