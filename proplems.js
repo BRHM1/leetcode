@@ -636,51 +636,76 @@ function wonderfulSubstrings(word) {
     const n = word.length;
     const freq = new Array(1024).fill(0); // Array to store frequencies of characters
     freq[0] = 1; // Initialize with an empty substring
-    
+
     let bitmask = 0; // Bitmask to represent frequency of characters
-    
+
     // Iterate over all characters
     for (let i = 0; i < n; i++) {
         const charIndex = word.charCodeAt(i) - 'a'.charCodeAt();
         bitmask ^= 1 << charIndex; // Toggle the bit for the current character
-        
+
         // Increase count for wonderful substrings
         count += freq[bitmask];
-        
+
         // Update frequencies array
         for (let j = 0; j < 10; j++) {
             const newBitmask = bitmask ^ (1 << j);
             count += freq[newBitmask];
         }
-        
+
         freq[bitmask]++;
     }
-    
+
     return count;
 }
 
-const determineSpecificBit = (number , n) => {
+const determineSpecificBit = (number, n) => {
     // this function checks if a specific bit is equall to 0 or 1 by using bitmasking
     let res = number.toString(2)
-    let bitmask = (1 << (n - 1)).toString(2).padStart(res.length , 0)
+    let bitmask = (1 << (n - 1)).toString(2).padStart(res.length, 0)
     return (bitmask & res) === 0 ? 0 : 1
 }
 
-var reversePrefix = function(word, ch) {
+var reversePrefix = function (word, ch) {
     let idx = word.indexOf(ch)
     let post = word.slice(idx + 1)
-    let reversedPre = word.slice(0 , idx + 1)
+    let reversedPre = word.slice(0, idx + 1)
     return idx ? reversedPre.split('').reverse().join('') + post : word
 };
 
 
-var findMaxK = function(nums) {
+var findMaxK = function (nums) {
     let isFound = new Set(nums)
     let max = 0
-    for(let num of nums){
-        max = isFound.has(num * -1) ? Math.max(Math.abs(num) , max) : max
+    for (let num of nums) {
+        max = isFound.has(num * -1) ? Math.max(Math.abs(num), max) : max
     }
     return max || -1
 };
-console.log(findMaxK([-1,2,-3,3]))
-// console.log(findMaxK([-1,10,6,7,-7,1]))
+
+var compareVersion = function (version1, version2) {
+    let v1 = version1.split(".")
+    let v2 = version2.split(".")
+    let res = 0, diff = v1.length - v2.length
+    while (diff !== 0) {
+        Math.sign(diff) === -1 ? v1.push("0") : v2.push("0")
+        diff > 0 ? diff-- : diff++
+    }
+    console.log(v1 , v2)
+    for (let i = 0; i < Math.min(v1.length, v2.length); i++) {
+        Rev1 = v1[i].padStart(Math.max(v1[i].length, v2[i].length), 0)
+        Rev2 = v2[i].padStart(Math.max(v1[i].length, v2[i].length), 0)
+        // compare the two revs , neglect any leading zeros        
+        for (let j = 0; j < Rev1.length; j++) {
+            if (Rev1[j] < Rev2[j]) {
+                return -1
+            } else if (Rev1[j] > Rev2[j]) {
+                return 1
+            }
+        }
+    }
+    return res
+};
+console.log(compareVersion("1.0", "1.0.1")) // 0
+console.log(compareVersion("1.01", "1.001")) // 0
+console.log(compareVersion("0.1", "1.1")) //-1
