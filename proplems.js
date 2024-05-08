@@ -704,3 +704,39 @@ var deleteNode = function (node) {
     node.val = node.next.val
     node.next = node.next.next
 };
+
+var doubleIt = function(head) {
+    // approach : reverse the linked list and start for node.val * 2 + remainder from the previous operation
+    const reverse = head => {
+        let prev = null , cur = head
+        while(cur !== null) {
+            let temp = cur.next
+            cur.next = prev
+            prev = cur
+            cur = temp
+        }
+        return prev
+    }
+    let dummy = reverse(head) 
+    let res = dummy
+    let remainder = 0
+    while(dummy !== null){
+        let num = ((2 * dummy.val) % 10) + remainder
+        remainder = Math.floor(2 * dummy.val / 10)
+        dummy.val = num
+        dummy = dummy.next
+    }
+    return reverse(res)
+};
+
+var findRelativeRanks = function(score) {
+    let tuple = ["Gold Medal" , "Silver Medal" , "Bronze Medal"]
+    let res = Array(score.length)
+    let pairs = score.map((val , i) => [val , i]) 
+    pairs.sort((a , b) => b[0] - a[0])
+    for(let i = 0; i < score.length; i++){
+        res[pairs[i][1]] = i > 2 ? `${i + 1}` : tuple[i]
+    }
+    return res
+};
+console.log(findRelativeRanks([10,3,8,9,4]))
