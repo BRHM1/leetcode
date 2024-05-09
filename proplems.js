@@ -739,4 +739,17 @@ var findRelativeRanks = function(score) {
     }
     return res
 };
-console.log(findRelativeRanks([10,3,8,9,4]))
+
+var maximumHappinessSum = function(happiness, k) {
+    happiness.sort((a , b) => b - a)
+    let sum = happiness[0]
+    let decrementCount = 1
+    for(let i = 1; i < k; i++){
+        if(happiness[i] - decrementCount > 0) sum += happiness[i] - decrementCount
+        decrementCount++
+    }
+    return sum
+};
+console.log(maximumHappinessSum([1,2,3] , 2)) // 4
+console.log(maximumHappinessSum([2,3,4,5] , 1)) // 5
+console.log(maximumHappinessSum([1,1,1,1] , 1)) // 1
