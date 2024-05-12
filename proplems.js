@@ -1,3 +1,4 @@
+
 function TreeNode(val, left, right) {
     this.val = (val === undefined ? 0 : val)
     this.left = (left === undefined ? null : left)
@@ -705,11 +706,11 @@ var deleteNode = function (node) {
     node.next = node.next.next
 };
 
-var doubleIt = function(head) {
+var doubleIt = function (head) {
     // approach : reverse the linked list and start for node.val * 2 + remainder from the previous operation
     const reverse = head => {
-        let prev = null , cur = head
-        while(cur !== null) {
+        let prev = null, cur = head
+        while (cur !== null) {
             let temp = cur.next
             cur.next = prev
             prev = cur
@@ -717,10 +718,10 @@ var doubleIt = function(head) {
         }
         return prev
     }
-    let dummy = reverse(head) 
+    let dummy = reverse(head)
     let res = dummy
     let remainder = 0
-    while(dummy !== null){
+    while (dummy !== null) {
         let num = ((2 * dummy.val) % 10) + remainder
         remainder = Math.floor(2 * dummy.val / 10)
         dummy.val = num
@@ -729,27 +730,78 @@ var doubleIt = function(head) {
     return reverse(res)
 };
 
-var findRelativeRanks = function(score) {
-    let tuple = ["Gold Medal" , "Silver Medal" , "Bronze Medal"]
+var findRelativeRanks = function (score) {
+    let tuple = ["Gold Medal", "Silver Medal", "Bronze Medal"]
     let res = Array(score.length)
-    let pairs = score.map((val , i) => [val , i]) 
-    pairs.sort((a , b) => b[0] - a[0])
-    for(let i = 0; i < score.length; i++){
+    let pairs = score.map((val, i) => [val, i])
+    pairs.sort((a, b) => b[0] - a[0])
+    for (let i = 0; i < score.length; i++) {
         res[pairs[i][1]] = i > 2 ? `${i + 1}` : tuple[i]
     }
     return res
 };
 
-var maximumHappinessSum = function(happiness, k) {
-    happiness.sort((a , b) => b - a)
+var maximumHappinessSum = function (happiness, k) {
+    happiness.sort((a, b) => b - a)
     let sum = happiness[0]
     let decrementCount = 1
-    for(let i = 1; i < k; i++){
-        if(happiness[i] - decrementCount > 0) sum += happiness[i] - decrementCount
+    for (let i = 1; i < k; i++) {
+        if (happiness[i] - decrementCount > 0) sum += happiness[i] - decrementCount
         decrementCount++
     }
     return sum
 };
-console.log(maximumHappinessSum([1,2,3] , 2)) // 4
-console.log(maximumHappinessSum([2,3,4,5] , 1)) // 5
-console.log(maximumHappinessSum([1,1,1,1] , 1)) // 1
+
+var kthSmallestPrimeFraction = function (arr, k) {
+    let l = 0, n = k, r = arr.length - 1, min = arr[l] / arr[r]
+    let res = [[arr[l], arr[r]]]
+    while (k > 0) {
+        // you can decrease the right ptr or increase the left one 
+        if (r - l > 1 && k > 0) {
+            let leftInc = arr[l + 1] / arr[r]
+            let rightDec = arr[l] / arr[r - 1]
+            if (leftInc < rightDec) {
+                res.push([arr[l + 1], arr[r]], [arr[l], arr[r - 1]])
+                l++
+            } else {
+                res.push([arr[l], arr[r - 1]], [arr[l + 1], arr[r]])
+                r--
+            }
+        }
+        k--
+    }
+    return res[n - 1] || res.at(-1)
+};
+
+var largestLocal = function (grid) {
+    let res = Array(grid.length - 2).fill().map(() => Array(grid[0].length - 2))
+    const getMaxOutOfRow = row => {
+        let modifiedRow = []
+        let window = []
+        for (let i = 0; i < row.length; i++) {
+            window.push(row[i])
+            if (window.length == 3) {
+                modifiedRow.push(Math.max(...window))
+                window.shift()
+            }
+        }
+        return modifiedRow
+    }
+    let newgrid = []
+    for(let i = 0; i < grid.length; i++){
+        newgrid.push(getMaxOutOfRow(grid[i]))
+    }
+    for(let i = 0; i < newgrid[0].length; i++){
+        let colwindow = []
+        for(let j = 0; j < newgrid.length; j++){
+            colwindow.push(newgrid[j][i])
+            if(colwindow.length === 3){
+                res[j % grid[0].length - 2][i] = Math.max(...colwindow)
+                colwindow.shift()
+            }
+        }
+    }
+    return res
+};
+console.log(largestLocal([[9, 9, 8, 1], [5, 6, 2, 6], [8, 2, 6, 4], [6, 2, 2, 2]]))
+console.log(largestLocal([[1, 1, 1, 1, 1], [1, 1, 1, 1, 1], [1, 1, 2, 1, 1], [1, 1, 1, 1, 1], [1, 1, 1, 1, 1]]))
