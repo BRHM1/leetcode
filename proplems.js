@@ -788,14 +788,14 @@ var largestLocal = function (grid) {
         return modifiedRow
     }
     let newgrid = []
-    for(let i = 0; i < grid.length; i++){
+    for (let i = 0; i < grid.length; i++) {
         newgrid.push(getMaxOutOfRow(grid[i]))
     }
-    for(let i = 0; i < newgrid[0].length; i++){
+    for (let i = 0; i < newgrid[0].length; i++) {
         let colwindow = []
-        for(let j = 0; j < newgrid.length; j++){
+        for (let j = 0; j < newgrid.length; j++) {
             colwindow.push(newgrid[j][i])
-            if(colwindow.length === 3){
+            if (colwindow.length === 3) {
                 res[j % grid[0].length - 2][i] = Math.max(...colwindow)
                 colwindow.shift()
             }
@@ -803,5 +803,44 @@ var largestLocal = function (grid) {
     }
     return res
 };
-console.log(largestLocal([[9, 9, 8, 1], [5, 6, 2, 6], [8, 2, 6, 4], [6, 2, 2, 2]]))
-console.log(largestLocal([[1, 1, 1, 1, 1], [1, 1, 1, 1, 1], [1, 1, 2, 1, 1], [1, 1, 1, 1, 1], [1, 1, 1, 1, 1]]))
+
+var matrixScore = function (grid) {
+    // trying to maximize the first col to be all one's
+    let sum = 0
+    let colsToFlip = Array(grid[0].length).fill(0)
+    for (let row = 0; row < grid.length; row++) {
+        let flip = false
+        for (let col = 0; col < grid[0].length; col++) {
+            // check if the first cell in the row == 0 if it is flip the whole row
+            // for each col look at the number of one's if it's less than 0's in that col flip the col
+            if (grid[row][col] == 0 && col == 0) flip = true
+            if (flip) grid[row][col] = 1 - grid[row][col]
+            if (!grid[row][col] && colsToFlip[col] != "*") {
+                colsToFlip[col] += 1
+                if (colsToFlip[col] > grid.length / 2) colsToFlip[col] = "*"
+            }
+        }
+        flip = false
+    }
+    let start = 1
+    let binaryMap = Array.from(Array(grid[0].length) , (elm) => {
+        elm = start * 2
+        start *= 2
+        return elm
+    })
+    binaryMap.unshift(1)
+    binaryMap.pop()
+    binaryMap.reverse()
+    for (let i = 0; i < grid.length; i++) {
+        for (let j = 0; j < grid[0].length; j++) {
+            if (colsToFlip[j] === '*') {
+                sum += (1 - grid[i][j]) * binaryMap[j]
+            } else {
+                sum += grid[i][j] * binaryMap[j]
+            }
+        }
+    }
+    return sum
+};
+console.log(matrixScore([[0, 0, 1, 1], [1, 0, 1, 0], [1, 1, 0, 0]]))
+console.log(matrixScore([[0]]))
