@@ -823,7 +823,7 @@ var matrixScore = function (grid) {
         flip = false
     }
     let start = 1
-    let binaryMap = Array.from(Array(grid[0].length) , (elm) => {
+    let binaryMap = Array.from(Array(grid[0].length), (elm) => {
         elm = start * 2
         start *= 2
         return elm
@@ -843,43 +843,72 @@ var matrixScore = function (grid) {
     return sum
 };
 
-var getMaximumGold = function(grid) {
-    const ROWS = grid.length , COLS = grid[0].length
-    let max = 0
-    let curSum = 0
-    const getDirections = (r , c) => {
-        const res = []
-        if(c + 1 < COLS) res.push([r , c + 1])
-        if(c - 1 >= 0) res.push([r , c - 1])
-        if(r + 1 < ROWS) res.push([r + 1, c])
-        if(r - 1 >= 0) res.push([r - 1, c])
+// var getMaximumGold = function(grid) {
+//     const ROWS = grid.length , COLS = grid[0].length
+//     let max = -Infinity
+//     let curSum = 0
+//     const getDirections = (r , c) => {
+//         const res = []
+//         if(c + 1 < COLS) res.push([r , c + 1])
+//         if(c - 1 >= 0) res.push([r , c - 1])
+//         if(r + 1 < ROWS) res.push([r + 1, c])
+//         if(r - 1 >= 0) res.push([r - 1, c])
+//         return res
+//     }
+//     console.log(getDirections(2,2))
+//     // run dfs backtrack on the grid
+//     const dfs = (r , c , visited) => {
+//         if(grid[r][c] === 0 || visited.has(`${r,c}`)) return 0
+//         let tmp = grid[r][c]
+//         // grid[r][c] = 0 // add to visited
+//         visited.add(`${r,c}`)
+//         curSum += tmp
+//         max = Math.max( max , curSum )
+//         for(let [row , col] of getDirections(r , c)){
+//             dfs(row , col, visited)
+//         }
+//         curSum -= tmp
+//         // grid[r][c] = tmp // undo from visited
+//         visited.delete(`${r,c}`)
+//     }
+//     for(let i = 0; i < ROWS; i++){
+//         for(let j = 0; j < COLS; j++){
+//             if(grid[i][j] === 0) continue
+//             curSum = 0
+//             dfs(i , j, new Set())
+//         }
+//     }
+//     return max
+// };
+
+var getMaximumGold = (grid) => {
+    const ROWS = grid.length, COLS = grid[0].length
+
+    const dfs = (r, c, visited) => {
+        if (Math.min(r, c) < 0 || r == ROWS ||
+            c == COLS || grid[r][c] == 0 ||
+            visited.has(`${r},${c}`)) return 0
+        visited.add(`${r},${c}`)
+        console.log(visited)
+        res = grid[r][c]
+        const neighbors = [[r - 1, c], [r + 1, c], [r, c - 1], [r, c + 1]]
+        for (let [row, col] of neighbors) {
+            res = Math.max(res, grid[r][c] + dfs(row, col, visited))
+        }
+        visited.delete(`${r},${c}`)
         return res
     }
-    console.log(getDirections(2,2))
-    // run dfs backtrack on the grid
-    const dfs = (r , c) => {
-        if(grid[r][c] === 0) return 0
-        let tmp = grid[r][c]
-        grid[r][c] = 0 // add to visited
-        curSum += tmp
-        max = Math.max( max , curSum )
-        for(let [row , col] of getDirections(r , c)){
-            dfs(row , col)
-        }
-        curSum -= tmp
-        grid[r][c] = tmp // undo from visited
-    }
-    for(let i = 0; i < ROWS; i++){
-        for(let j = 0; j < COLS; j++){
-            if(grid[i][j] === 0) continue
-            curSum = 0
-            dfs(i , j)
+    let res = 0
+    for (let i = 0; i < ROWS; i++) {
+        for (let j = 0; j < COLS; j++) {
+            if (grid[i][j] === 0) continue
+            res = Math.max(res, dfs(i, j, new Set()))
         }
     }
-    return max
-};
+    return res
+}
 console.log(getMaximumGold(
-    [[0,6,0],
-    [5,8,7],
-    [0,9,0]])) // 24
-console.log(getMaximumGold([[1,0,7],[2,0,6],[3,4,5],[0,3,0],[9,0,20]])) // 28
+    [[0, 6, 0],
+    [5, 8, 7],
+    [0, 9, 0]])) // 24
+console.log(getMaximumGold([[1, 0, 7], [2, 0, 6], [3, 4, 5], [0, 3, 0], [9, 0, 20]])) // 28
