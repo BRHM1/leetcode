@@ -907,8 +907,16 @@ var getMaximumGold = (grid) => {
     }
     return res
 }
-console.log(getMaximumGold(
-    [[0, 6, 0],
-    [5, 8, 7],
-    [0, 9, 0]])) // 24
-console.log(getMaximumGold([[1, 0, 7], [2, 0, 6], [3, 4, 5], [0, 3, 0], [9, 0, 20]])) // 28
+
+var evaluateTree = function(root) {
+    if(!root.left) return !!root.val
+    let res = false
+    if(root.val === 2) {
+        res = evaluateTree(root.left) || evaluateTree(root.right)
+    }else if(root.val === 3){
+        res = evaluateTree(root.left) && evaluateTree(root.right)
+    }
+    return !!res
+};
+const tree = new TreeNode(0) // true
+console.log(evaluateTree(tree))
