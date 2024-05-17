@@ -918,5 +918,14 @@ var evaluateTree = function(root) {
     }
     return !!res
 };
-const tree = new TreeNode(0) // true
-console.log(evaluateTree(tree))
+
+var removeLeafNodes = function(root, target) {
+    const post_order = (root ,target) => {
+        if(!root) return null
+        root.left = post_order(root.left, target)
+        root.right = post_order(root.right, target)
+        if(root.left === root.right && root.val === target) return null
+        return root
+    }
+    return post_order(root, target)
+};
