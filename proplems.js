@@ -929,3 +929,21 @@ var removeLeafNodes = function(root, target) {
     }
     return post_order(root, target)
 };
+
+var distributeCoins = function(root) {
+    let sum = 0
+    // note that there are n nodes also n coins
+    const helper = (root) => {
+        // if it's a leaf node it should send to the root -val or +val
+        if(!root) return 0
+        if(!root.left && !root.right) return root.val - 1
+        let left = helper(root.left)
+        let right = helper(root.right)
+        sum += Math.abs(left) + Math.abs(right)
+        return root.val + left + right - 1
+    }
+    helper(root)
+    return sum
+};
+const tree = new TreeNode(3, new TreeNode(0) , new TreeNode(0))
+console.log(distributeCoins(tree))
