@@ -908,35 +908,35 @@ var getMaximumGold = (grid) => {
     return res
 }
 
-var evaluateTree = function(root) {
-    if(!root.left) return !!root.val
+var evaluateTree = function (root) {
+    if (!root.left) return !!root.val
     let res = false
-    if(root.val === 2) {
+    if (root.val === 2) {
         res = evaluateTree(root.left) || evaluateTree(root.right)
-    }else if(root.val === 3){
+    } else if (root.val === 3) {
         res = evaluateTree(root.left) && evaluateTree(root.right)
     }
     return !!res
 };
 
-var removeLeafNodes = function(root, target) {
-    const post_order = (root ,target) => {
-        if(!root) return null
+var removeLeafNodes = function (root, target) {
+    const post_order = (root, target) => {
+        if (!root) return null
         root.left = post_order(root.left, target)
         root.right = post_order(root.right, target)
-        if(root.left === root.right && root.val === target) return null
+        if (root.left === root.right && root.val === target) return null
         return root
     }
     return post_order(root, target)
 };
 
-var distributeCoins = function(root) {
+var distributeCoins = function (root) {
     let sum = 0
     // note that there are n nodes also n coins
     const helper = (root) => {
         // if it's a leaf node it should send to the root -val or +val
-        if(!root) return 0
-        if(!root.left && !root.right) return root.val - 1
+        if (!root) return 0
+        if (!root.left && !root.right) return root.val - 1
         let left = helper(root.left)
         let right = helper(root.right)
         sum += Math.abs(left) + Math.abs(right)
@@ -945,5 +945,17 @@ var distributeCoins = function(root) {
     helper(root)
     return sum
 };
-const tree = new TreeNode(3, new TreeNode(0) , new TreeNode(0))
-console.log(distributeCoins(tree))
+
+// 3068. Find the Maximum Sum of Node Values
+var maximumValueSum = function (nums, k, edges) {
+    let delta = Array.from(nums, num => ((num ^ k) - num))
+    delta.sort((a , b) => b - a)
+    let sum = nums.reduce((acc , cur) => acc + cur, 0)
+    for(let i = 0; i < nums.length; i += 2){
+        if(i + 1 >= nums.length) break
+        if(delta[i] + delta[i + 1] <= 0) break
+        sum += delta[i] + delta[i + 1]
+    }
+    return sum
+};
+console.log(maximumValueSum([1, 2, 1], 3, [[0, 1], [0, 2]]))
