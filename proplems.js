@@ -958,4 +958,21 @@ var maximumValueSum = function (nums, k, edges) {
     }
     return sum
 };
-console.log(maximumValueSum([1, 2, 1], 3, [[0, 1], [0, 2]]))
+
+var subsetXORSum = function(nums) {
+    let sum = 0
+    const backtrack = (cur_index, xor) => {
+        if(cur_index >= nums.length) {
+            sum += xor
+            return
+        }
+        xor ^= nums[cur_index] 
+        for(let i = cur_index; i < nums.length; i++) backtrack(i + 1, xor)
+        xor ^= nums[cur_index]
+    }
+    for(let i = 0; i < nums.length; i++) backtrack(i, 0)
+    return sum
+};
+console.log(subsetXORSum([5,1,6]))//28
+console.log(subsetXORSum([1,3]))//6
+console.log(subsetXORSum([3,4,5,6,7,8]))//480
