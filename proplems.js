@@ -949,33 +949,46 @@ var distributeCoins = function (root) {
 // 3068. Find the Maximum Sum of Node Values
 var maximumValueSum = function (nums, k, edges) {
     let delta = Array.from(nums, num => ((num ^ k) - num))
-    delta.sort((a , b) => b - a)
-    let sum = nums.reduce((acc , cur) => acc + cur, 0)
-    for(let i = 0; i < nums.length; i += 2){
-        if(i + 1 >= nums.length) break
-        if(delta[i] + delta[i + 1] <= 0) break
+    delta.sort((a, b) => b - a)
+    let sum = nums.reduce((acc, cur) => acc + cur, 0)
+    for (let i = 0; i < nums.length; i += 2) {
+        if (i + 1 >= nums.length) break
+        if (delta[i] + delta[i + 1] <= 0) break
         sum += delta[i] + delta[i + 1]
     }
     return sum
 };
 
-// var subsetXORSum = function(nums) {
-//     let sum = 0
-//     const backtrack = (cur_index, xor) => {
-//         if(cur_index >= nums.length) {
-//             sum += xor
-//             return
-//         }
-//         xor ^= nums[cur_index] 
-//         for(let i = cur_index; i < nums.length; i++) backtrack(i + 1, xor)
-//         xor ^= nums[cur_index]
-//     }
-//     for(let i = 0; i < nums.length; i++) backtrack(i, 0)
-//     return sum
-// };
-var subsetXORSum = function(nums) {
-    return nums.reduce((acc , cur) => acc | cur)  << nums.length - 1
+var subsetXORSum = function (nums) {
+    let sum = 0
+    const backtrack = (cur_index, xor) => {
+        if (cur_index >= nums.length) {
+            sum += xor
+            return
+        }
+        xor ^= nums[cur_index]
+        for (let i = cur_index; i < nums.length; i++) backtrack(i + 1, xor)
+        xor ^= nums[cur_index]
+    }
+    for (let i = 0; i < nums.length; i++) backtrack(i, 0)
+    return sum
 };
-console.log(subsetXORSum([5,1,6]))//28
-console.log(subsetXORSum([1,3]))//6
-console.log(subsetXORSum([3,4,5,6,7,8]))//480
+
+var subsetXORSum = function (nums) {
+    return nums.reduce((acc, cur) => acc | cur) << nums.length - 1
+};
+
+var subsetsII = function (nums) {
+    const paths = [[]]
+    const backtrack = (cur_index, path) => {
+        if (cur_index >= nums.length) return 1 && paths.push([...path])
+        path.push(nums[cur_index])
+        for (let i = cur_index; i < nums.length; i++) {
+            backtrack(i + 1, path)
+        }
+        path.pop()
+    }
+    for(let i = 0; i < nums.length; i++) backtrack(i , [])
+    return paths
+};
+console.log(subsetsII([1, 2, 3]))

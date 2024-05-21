@@ -1,1 +1,1 @@
-if (grid[i][j] === 0) continue
+backtrack
