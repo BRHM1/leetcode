@@ -988,7 +988,77 @@ var subsetsII = function (nums) {
         }
         path.pop()
     }
-    for(let i = 0; i < nums.length; i++) backtrack(i , [])
+    for (let i = 0; i < nums.length; i++) backtrack(i, [])
     return paths
 };
-console.log(subsetsII([1, 2, 3]))
+
+
+
+// 131. Palindrome Partitioning
+// var partition = function (s) {
+//     const res = []
+//     // get all possible partitions and filter them
+//     const isPlindrome = str => {
+//         let l = 0, r = str.length - 1
+//         while (l <= r) {
+//             if (str[l] !== str[r]) return false
+//             l++
+//             r--
+//         }
+//         return true
+//     }
+//     const backtrack = (idx, cur_part) => {
+//         if (idx >= s.length) return isPlindrome(cur_part) && res.push(cur_part)
+//         cur_part += s[idx]
+//         for (let i = idx; i < s.length; i++) {
+//             backtrack(i + 1, cur_part)
+//         }
+//         cur_part = cur_part.slice(0, idx - 1)
+//     }
+//     for (let i = 0; i < s.length; i++) backtrack(i, "")
+//     let words = []
+//     let found = new Set()
+//     const construct = (idx, cur_word, cur_path) => {
+//         if (cur_word === s) {
+//             let part = cur_path.reduce((acc , cur) => acc + "," + cur, "")
+//             return !found.has(part) && words.push([...cur_path]) && found.add(part)
+//         }
+//         if (idx >= res.length) return
+//         let temp = cur_word
+//         cur_word += res[idx]
+//         cur_path.push(res[idx])
+//         construct(idx + 1, cur_word, cur_path)
+//         cur_word = temp
+//         cur_path.pop()
+//         construct(idx + 1, cur_word, cur_path)
+//     }
+//     construct(0, "", [])
+//     return words
+// };
+
+const partition = s => {
+    const res = []
+    const part = []
+    const isPlindrome = (str ,l , r) => {
+                while (l <= r) {
+                    if (str[l] !== str[r]) return false
+                    l++
+                    r--
+                }
+                return true
+            }
+    const backtrack = (idx) => {
+        if (idx >= s.length) return 1 && res.push([...part])
+        for (let i = idx; i < s.length; i++) {
+            if(isPlindrome(s , idx , i)){
+                part.push(s.slice(idx , i + 1))
+                backtrack(i + 1)
+                part.pop()
+            }
+        }
+    }
+    backtrack(0)
+    return res
+}
+
+console.log(partition("aab"))
