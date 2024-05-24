@@ -994,64 +994,22 @@ var subsetsII = function (nums) {
 
 
 
-// 131. Palindrome Partitioning
-// var partition = function (s) {
-//     const res = []
-//     // get all possible partitions and filter them
-//     const isPlindrome = str => {
-//         let l = 0, r = str.length - 1
-//         while (l <= r) {
-//             if (str[l] !== str[r]) return false
-//             l++
-//             r--
-//         }
-//         return true
-//     }
-//     const backtrack = (idx, cur_part) => {
-//         if (idx >= s.length) return isPlindrome(cur_part) && res.push(cur_part)
-//         cur_part += s[idx]
-//         for (let i = idx; i < s.length; i++) {
-//             backtrack(i + 1, cur_part)
-//         }
-//         cur_part = cur_part.slice(0, idx - 1)
-//     }
-//     for (let i = 0; i < s.length; i++) backtrack(i, "")
-//     let words = []
-//     let found = new Set()
-//     const construct = (idx, cur_word, cur_path) => {
-//         if (cur_word === s) {
-//             let part = cur_path.reduce((acc , cur) => acc + "," + cur, "")
-//             return !found.has(part) && words.push([...cur_path]) && found.add(part)
-//         }
-//         if (idx >= res.length) return
-//         let temp = cur_word
-//         cur_word += res[idx]
-//         cur_path.push(res[idx])
-//         construct(idx + 1, cur_word, cur_path)
-//         cur_word = temp
-//         cur_path.pop()
-//         construct(idx + 1, cur_word, cur_path)
-//     }
-//     construct(0, "", [])
-//     return words
-// };
-
 const partition = s => {
     const res = []
     const part = []
-    const isPlindrome = (str ,l , r) => {
-                while (l <= r) {
-                    if (str[l] !== str[r]) return false
-                    l++
-                    r--
-                }
-                return true
-            }
+    const isPlindrome = (str, l, r) => {
+        while (l <= r) {
+            if (str[l] !== str[r]) return false
+            l++
+            r--
+        }
+        return true
+    }
     const backtrack = (idx) => {
         if (idx >= s.length) return 1 && res.push([...part])
         for (let i = idx; i < s.length; i++) {
-            if(isPlindrome(s , idx , i)){
-                part.push(s.slice(idx , i + 1))
+            if (isPlindrome(s, idx, i)) {
+                part.push(s.slice(idx, i + 1))
                 backtrack(i + 1)
                 part.pop()
             }
@@ -1061,4 +1019,66 @@ const partition = s => {
     return res
 }
 
-console.log(partition("aab"))
+
+var maxScoreWords = function (words, letters, score) {
+    // backtrack each subset i can take and know the global count at one moment 
+    // if i exceed the global count it's no more valid path
+    let res = 0
+    let count = new Map()
+    for (let letter of letters) {
+        count.set(letter, (count.get(letter) || 0) + 1)
+    }
+    let word_values = new Map()
+    for (let word of words) {
+        let res = 0
+        for (let letter of word) {
+            res += score[letter.charCodeAt(0) - 97]
+        }
+        word_values.set(word, res)
+    }
+    console.log(word_values)
+    const paths = []
+    const backtrack = (idx, current_res, path) => {
+        // determine if this is a valid path if not return
+        if (idx >= words.length) {
+            res = Math.max(current_res, res)
+            return 1 && paths.push([...path])
+        }
+        let temp = word_values.get(words[idx])
+        let temp_count = new Map()
+        const isValidPath = () => {
+            for (let letter of words[idx]) {
+                if (count.has(letter) === false) return false
+                count.set(letter, count.get(letter) - 1);
+                temp_count.set(letter, (temp_count.get(letter) || 0) + 1);
+                // the path is no more valid 
+                if (count.get(letter) < 0) return false
+            }
+            return true
+        }
+        // add to current result
+        let valid = isValidPath()
+        if (valid) current_res += temp
+        path.push(words[idx])
+        backtrack(idx + 1, current_res, path)
+        path.pop()
+        // remove the added value to current result
+        if (valid) current_res -= temp
+        // add the decremented count to the path
+
+        for (let [letter, value] of temp_count) {
+            count.set(letter, count.get(letter) + value)
+        }
+
+        backtrack(idx + 1, current_res, path)
+    }
+    backtrack(0, 0, [])
+    return res
+};
+
+
+console.log(maxScoreWords(
+    ["dog", "cat", "dad", "good"],
+    ["a", "a", "c", "d", "d", "d", "g", "o", "o"],
+    [1, 0, 9, 5, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+)) //23
