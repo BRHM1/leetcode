@@ -1076,9 +1076,72 @@ var maxScoreWords = function (words, letters, score) {
     return res
 };
 
+const sayed = (machines, inp) => {
+    let res = []
+    // console.log(inp.length)
+    for (let i = 0; i < machines / 2; i += 2) {
+        let min = Infinity
+        let needed = inp[i]
+        let bank = inp[i + 1]
+        for (let j = 0; j < 3; j++) {
+            min = Math.min(min, Math.floor(bank[j] / needed[j]))
+        }
+        res.push(min)
+    }
+    return res
+}
 
-console.log(maxScoreWords(
-    ["dog", "cat", "dad", "good"],
-    ["a", "a", "c", "d", "d", "d", "g", "o", "o"],
-    [1, 0, 9, 5, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-)) //23
+const hard_sayed = (T, inp) => {
+    let [rcd, bank, price, total] = inp
+    let new_capacity = []
+    let res = sayed(1, [rcd, bank])
+    for (let i = 0; i < 3; i++) {
+        new_capacity[i] = bank[i] - (res[0] * rcd[i])
+    }
+    while (total > 0) {
+        let cost = 0
+        for (let i = 0; i < 3; i++) {
+            if (new_capacity[i] >= rcd[i]) {
+                new_capacity[i] -= rcd[i]
+                continue
+            }
+            let units = rcd[i] - new_capacity[i]
+            let unit_price = price[i]
+            cost += unit_price * units
+            new_capacity[i] = 0
+        }
+        total -= cost
+        if (total < 0) break
+        res[0] += 1
+    }
+    return res
+}
+
+let iter = (inp) => {
+    console.log(inp.length)
+    let res = []
+    for (let i = 0; i < inp.length; i++) {
+        let call = inp[i]
+        console.log(hard_sayed(30, call)[0])
+    }
+    return res
+}
+
+var wordBreak = function (s, wordDict) {
+    let res = []
+    let words = []
+    const backtrack = function (idx){
+        if (idx === s.length) return 1 && res.push(words.join(' '))
+        for (let i = idx; i < s.length; i++) {
+            let word = s.substring(idx , i + 1)
+            if(!wordDict.includes(word)) continue
+            words.push(word)
+            backtrack(i + 1)
+            words.pop()
+        }
+    }
+    backtrack(0)
+    return res
+};
+// console.log(wordBreak("catsanddog", ["cat", "cats", "and", "sand", "dog"]))
+console.log(wordBreak("pineapplepenapple", ["apple", "pen", "applepen", "pine", "pineapple"]))
