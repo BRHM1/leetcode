@@ -1157,7 +1157,7 @@ var checkRecord = function (n) {
         path += (A === 0 && dp(depth + 1, A + 1, 0)) +
                 (L < 2 && dp(depth + 1, A, L + 1)) +
                 dp(depth + 1, A, 0) 
-                
+
         memo[key] = path % MOD
         return memo[key]
     }
@@ -1180,4 +1180,5 @@ var checkRecord = function (n) {
     }
     return dp(0, 0, 0);
 };
+console.log(checkRecord(2))
 console.log(checkRecord(2))
