@@ -1130,11 +1130,11 @@ let iter = (inp) => {
 var wordBreak = function (s, wordDict) {
     let res = []
     let words = []
-    const backtrack = function (idx){
+    const backtrack = function (idx) {
         if (idx === s.length) return 1 && res.push(words.join(' '))
         for (let i = idx; i < s.length; i++) {
-            let word = s.substring(idx , i + 1)
-            if(!wordDict.includes(word)) continue
+            let word = s.substring(idx, i + 1)
+            if (!wordDict.includes(word)) continue
             words.push(word)
             backtrack(i + 1)
             words.pop()
@@ -1143,5 +1143,41 @@ var wordBreak = function (s, wordDict) {
     backtrack(0)
     return res
 };
-// console.log(wordBreak("catsanddog", ["cat", "cats", "and", "sand", "dog"]))
-console.log(wordBreak("pineapplepenapple", ["apple", "pen", "applepen", "pine", "pineapple"]))
+
+
+var checkRecord = function (n) {
+    const MOD = (10 ** 9) + 7
+    const memo = {}
+    const dp = (depth, A, L) => {
+        let key = `${depth},${A},${L}`
+        if (memo[key]) return memo[key]
+        if (A === 2 || L === 3) return 0
+        if (depth >= n) return 1
+        let path = 0
+        path += (A === 0 && dp(depth + 1, A + 1, 0)) +
+                (L < 2 && dp(depth + 1, A, L + 1)) +
+                dp(depth + 1, A, 0) 
+                
+        memo[key] = path % MOD
+        return memo[key]
+    }
+    return dp(0, 0, 0)
+};
+
+var checkRecord = function (n) {
+    const MOD = (10 ** 9) + 7;
+    let memo = new Array(n + 1).fill(0).map(() => new Array(2).fill(0).map(() => new Array(3).fill(-1)));
+    console.log(memo)
+    const dp = (depth, A, L) => {
+        if (depth === n) return 1;
+        if (A >= 2 || L >= 3) return 0;
+        if (memo[depth][A][L] !== -1) return memo[depth][A][L];
+        let path = (A === 0 && dp(depth + 1, A + 1, 0) % MOD) +
+            (L < 2 && dp(depth + 1, A, L + 1) % MOD) +
+            dp(depth + 1, A, 0)
+        memo[depth][A][L] = path % MOD;
+        return path % MOD
+    }
+    return dp(0, 0, 0);
+};
+console.log(checkRecord(2))
