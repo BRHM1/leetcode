@@ -1155,8 +1155,8 @@ var checkRecord = function (n) {
         if (depth >= n) return 1
         let path = 0
         path += (A === 0 && dp(depth + 1, A + 1, 0)) +
-                (L < 2 && dp(depth + 1, A, L + 1)) +
-                dp(depth + 1, A, 0) 
+            (L < 2 && dp(depth + 1, A, L + 1)) +
+            dp(depth + 1, A, 0)
 
         memo[key] = path % MOD
         return memo[key]
@@ -1180,5 +1180,23 @@ var checkRecord = function (n) {
     }
     return dp(0, 0, 0);
 };
-console.log(checkRecord(2))
-console.log(checkRecord(2))
+
+
+var equalSubstring = function (s, t, maxCost) {
+    let l = 0, maxLen = 0 , cost = 0
+    for(let r = 0; r < s.length; r++){
+        cost += Math.abs(s[r].charCodeAt(0) - t[r].charCodeAt(0))
+        while(cost > maxCost) {
+            cost -= Math.abs(s[l].charCodeAt(0) - t[l].charCodeAt(0))
+            l++
+        }
+        maxLen = Math.max(maxLen , r - l + 1)
+    }
+    return maxLen
+};
+
+console.log(equalSubstring("abcd", "bcdf", 3)) //3
+console.log(equalSubstring("abcd", "acde", 0)) //1
+console.log(equalSubstring("abcd", "cdef", 3)) //1 
+console.log(equalSubstring("krrgw", "zjxss", 19)) //2
+console.log(equalSubstring("ujteygggjwxnfl", "nstsenrzttikoy", 43)) //2
