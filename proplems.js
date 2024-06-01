@@ -1183,20 +1183,65 @@ var checkRecord = function (n) {
 
 
 var equalSubstring = function (s, t, maxCost) {
-    let l = 0, maxLen = 0 , cost = 0
-    for(let r = 0; r < s.length; r++){
+    let l = 0, maxLen = 0, cost = 0
+    for (let r = 0; r < s.length; r++) {
         cost += Math.abs(s[r].charCodeAt(0) - t[r].charCodeAt(0))
-        while(cost > maxCost) {
+        while (cost > maxCost) {
             cost -= Math.abs(s[l].charCodeAt(0) - t[l].charCodeAt(0))
             l++
         }
-        maxLen = Math.max(maxLen , r - l + 1)
+        maxLen = Math.max(maxLen, r - l + 1)
     }
     return maxLen
 };
 
-console.log(equalSubstring("abcd", "bcdf", 3)) //3
-console.log(equalSubstring("abcd", "acde", 0)) //1
-console.log(equalSubstring("abcd", "cdef", 3)) //1 
-console.log(equalSubstring("krrgw", "zjxss", 19)) //2
-console.log(equalSubstring("ujteygggjwxnfl", "nstsenrzttikoy", 43)) //2
+// time complexity : O(N^3)
+// var countTriplets = function (arr) {
+//     let a = 0, b = 0
+//     let res = 0
+//     for (let i = 0; i < arr.length - 1; i++) {
+//         a = 0
+//         for (let j = i + 1; j < arr.length; j++) {
+//             a ^= arr[j - 1]
+//             b = 0
+//             for (let k = j; k < arr.length; k++) {
+//                 b ^= arr[k]
+//                 if(a == b) res++
+//             }
+//         }
+//     }
+//     return res
+// };
+
+
+// time complexity : O(N^2)
+var countTriplets = function (arr) {
+    let res = 0
+    for (let i = 0; i < arr.length - 1; i++) {
+        let cur_xor = arr[i] 
+        for(let k = i + 1; k < arr.length; k++){
+            cur_xor ^= arr[k]
+            if(cur_xor === 0) res += k - i
+        }
+    }
+    return res
+};
+
+var singleNumber = function(nums) {
+    // each dublicated number will cancel itself and the xorSum will be equall to first_unique ^ second_unique 
+    let xorSum = nums.reduce((acc , cur) => acc ^ cur, 0)
+    let a = 0
+    let b = 0
+    let isolationBit = xorSum & -xorSum
+    // seperate nums array into two groups based on one bit from the result
+    // so we can isolate the first_unique in group and the second on group
+    for(let num of nums) {
+        if(num & isolationBit){
+            a ^= num
+        }else {
+            b ^= num
+        }
+    }
+    return [a , b]
+};
+console.log(singleNumber([1,1,2,3,2,5]))
