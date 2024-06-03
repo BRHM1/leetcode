@@ -1218,30 +1218,35 @@ var equalSubstring = function (s, t, maxCost) {
 var countTriplets = function (arr) {
     let res = 0
     for (let i = 0; i < arr.length - 1; i++) {
-        let cur_xor = arr[i] 
-        for(let k = i + 1; k < arr.length; k++){
+        let cur_xor = arr[i]
+        for (let k = i + 1; k < arr.length; k++) {
             cur_xor ^= arr[k]
-            if(cur_xor === 0) res += k - i
+            if (cur_xor === 0) res += k - i
         }
     }
     return res
 };
 
-var singleNumber = function(nums) {
+var singleNumber = function (nums) {
     // each dublicated number will cancel itself and the xorSum will be equall to first_unique ^ second_unique 
-    let xorSum = nums.reduce((acc , cur) => acc ^ cur, 0)
+    let xorSum = nums.reduce((acc, cur) => acc ^ cur, 0)
     let a = 0
     let b = 0
     let isolationBit = xorSum & -xorSum
     // seperate nums array into two groups based on one bit from the result
     // so we can isolate the first_unique in group and the second on group
-    for(let num of nums) {
-        if(num & isolationBit){
+    for (let num of nums) {
+        if (num & isolationBit) {
             a ^= num
-        }else {
+        } else {
             b ^= num
         }
     }
-    return [a , b]
+    return [a, b]
 };
-console.log(singleNumber([1,1,2,3,2,5]))
+
+var appendCharacters = function (s, t) {
+    let tp = 0;
+    for (let i = 0; i < s.length; i++) tp += s[i] === t[tp];
+    return t.length - tp;
+};
