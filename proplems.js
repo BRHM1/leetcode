@@ -1250,3 +1250,88 @@ var appendCharacters = function (s, t) {
     for (let i = 0; i < s.length; i++) tp += s[i] === t[tp];
     return t.length - tp;
 };
+
+var longestPalindrome = function (s) {
+    let occ = new Map(), odd = 0, res = 0
+    for (let char of s) {
+        occ.set(char, (occ.get(char) || 0) + 1)
+    }
+    for (let [key, value] of occ) {
+        if (value % 2 !== 1) odd = 1
+        res += value % 2 === 0 ? value : value - 1
+    }
+    return res + odd
+};
+
+var relativeSortArray = function (arr1, arr2) {
+    let freq = new Map(), res = [], rem = []
+    for (let i = 0; i < arr1.length; i++) {
+        if (!arr2.includes(arr1[i])) rem.push(arr1[i])
+        freq.set(arr1[i], (freq.get(arr1[i]) || 0) + 1)
+    }
+    for (let i = 0; i < arr2.length; i++) {
+        let repeat = freq.get(arr2[i])
+        while (repeat--) {
+            res.push(arr2[i])
+        }
+    }
+    rem.sort((a, b) => a - b)
+    return [...res, ...rem]
+}
+
+var heightChecker = function (heights) {
+    let sorted = heights.toSorted((a, b) => a - b), res = 0
+    heights.reduce((_, __, idx) => {
+        res += heights[idx] !== sorted[idx]
+    }, 0)
+    return res
+}
+
+var subarrayDivByK = function (nums, k) {
+    let prefixSum = 0, hash = new Map(), res = 0
+    hash.set(0, 1)
+    for (let n of nums) {
+        prefixSum += n
+        let remainder = (prefixSum % k + k) % k
+        res += hash.get(remainder) ? hash.get(remainder) : 0
+        hash.set(remainder, (hash.get(remainder) || 0) + 1)
+    }
+    return res
+}
+
+
+var solveNQueens = function (n) {
+    const cols = new Set()
+    const diagonals = new Set()
+    const antiDiagonals = new Set()
+    const res = []
+    const board = Array(n).fill().map(() => Array(n).fill("."))
+    const backtrack = (r) => {
+            if (r === n){
+                let b = []
+                for(let r of board){
+                    b.push(r.join(""))
+                }
+                res.push(b)
+                return 
+            }
+            for (let col = 0; col < n; col++) {
+                if (cols.has(col) || diagonals.has(r - col) || antiDiagonals.has(r + col)) continue
+                cols.add(col)
+                diagonals.add(r - col)
+                antiDiagonals.add(r + col)
+                board[r][col] = "Q"
+                backtrack(r + 1)
+                // console.log(board)
+                board[r][col] = "."
+                cols.delete(col)
+                diagonals.delete(r - col)
+                antiDiagonals.delete(r + col)
+            }
+    }
+    backtrack(0)
+    return res
+};
+console.log(solveNQueens(4))
+// console.log(solveNQueens(1))
+
