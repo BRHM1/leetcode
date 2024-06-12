@@ -1307,31 +1307,43 @@ var solveNQueens = function (n) {
     const res = []
     const board = Array(n).fill().map(() => Array(n).fill("."))
     const backtrack = (r) => {
-            if (r === n){
-                let b = []
-                for(let r of board){
-                    b.push(r.join(""))
-                }
-                res.push(b)
-                return 
+        if (r === n) {
+            let b = []
+            for (let r of board) {
+                b.push(r.join(""))
             }
-            for (let col = 0; col < n; col++) {
-                if (cols.has(col) || diagonals.has(r - col) || antiDiagonals.has(r + col)) continue
-                cols.add(col)
-                diagonals.add(r - col)
-                antiDiagonals.add(r + col)
-                board[r][col] = "Q"
-                backtrack(r + 1)
-                // console.log(board)
-                board[r][col] = "."
-                cols.delete(col)
-                diagonals.delete(r - col)
-                antiDiagonals.delete(r + col)
-            }
+            res.push(b)
+            return
+        }
+        for (let col = 0; col < n; col++) {
+            if (cols.has(col) || diagonals.has(r - col) || antiDiagonals.has(r + col)) continue
+            cols.add(col)
+            diagonals.add(r - col)
+            antiDiagonals.add(r + col)
+            board[r][col] = "Q"
+            backtrack(r + 1)
+            // console.log(board)
+            board[r][col] = "."
+            cols.delete(col)
+            diagonals.delete(r - col)
+            antiDiagonals.delete(r + col)
+        }
     }
     backtrack(0)
     return res
 };
-console.log(solveNQueens(4))
-// console.log(solveNQueens(1))
 
+var sortColors = function (nums) {
+    let twoPtr = nums.length - 1, zeroPtr = 0
+    let i = 0
+    while(i < nums.length){
+        while(nums[twoPtr] === 2) twoPtr--
+        while(nums[zeroPtr] === 0) zeroPtr++
+        if(nums[i] === 2 && i < twoPtr) [nums[twoPtr] , nums[i]] = [nums[i] , nums[twoPtr]]
+        else if(nums[i] === 0 && i > zeroPtr) [nums[zeroPtr] , nums[i]] = [nums[i] , nums[zeroPtr]]
+        else i++
+    }
+    return nums
+}
+// console.log(sortColors([2, 0, 1]))
+console.log(sortColors([2, 0, 2, 1, 1, 0]))
