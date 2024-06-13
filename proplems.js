@@ -1336,14 +1336,37 @@ var solveNQueens = function (n) {
 var sortColors = function (nums) {
     let twoPtr = nums.length - 1, zeroPtr = 0
     let i = 0
-    while(i < nums.length){
-        while(nums[twoPtr] === 2) twoPtr--
-        while(nums[zeroPtr] === 0) zeroPtr++
-        if(nums[i] === 2 && i < twoPtr) [nums[twoPtr] , nums[i]] = [nums[i] , nums[twoPtr]]
-        else if(nums[i] === 0 && i > zeroPtr) [nums[zeroPtr] , nums[i]] = [nums[i] , nums[zeroPtr]]
+    while (i < nums.length) {
+        while (nums[twoPtr] === 2) twoPtr--
+        while (nums[zeroPtr] === 0) zeroPtr++
+        if (nums[i] === 2 && i < twoPtr) [nums[twoPtr], nums[i]] = [nums[i], nums[twoPtr]]
+        else if (nums[i] === 0 && i > zeroPtr) [nums[zeroPtr], nums[i]] = [nums[i], nums[zeroPtr]]
         else i++
     }
     return nums
 }
-// console.log(sortColors([2, 0, 1]))
-console.log(sortColors([2, 0, 2, 1, 1, 0]))
+
+var minMovesToSeat = function (seats, students) {
+    let res = 0
+    let max = Math.max(...seats, ...students)
+    let seatsSorted = Array(max).fill(0)
+    let studentsSorted = Array(max).fill(0)
+    for (let i = 0; i < students.length; i++) {
+        seatsSorted[seats[i] - 1] += 1
+        studentsSorted[students[i] - 1] += 1
+    }
+    let seatsPtr = 0
+    let i = 0
+
+    while (i < studentsSorted.length) {
+        while (studentsSorted[i] === 0) i++
+        while (seatsSorted[seatsPtr] === 0) seatsPtr++
+        let min = Math.min(studentsSorted[i], seatsSorted[seatsPtr])
+        if (isNaN(min)) break
+        res += min * Math.abs(i - seatsPtr)
+        seatsSorted[seatsPtr] -= min
+        studentsSorted[i] -= min
+    }
+
+    return res
+};
