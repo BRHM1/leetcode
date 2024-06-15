@@ -1370,3 +1370,22 @@ var minMovesToSeat = function (seats, students) {
 
     return res
 };
+
+
+var minIncrementForUnique = function (nums) {
+    let seen = new Map()
+    let res = 0
+    nums.sort((a, b) => a - b)
+    console.log(nums)
+    let lastAvailable = nums[0]
+    for (let num of nums){ seen.set(num, (seen.get(num) || 0) + 1)}
+    for (let [key, val] of seen) {
+        let shift = key > lastAvailable ? 0 : lastAvailable - key
+        if(val > 1) {
+            res += (val * (val - 1) / 2) + (shift * val)
+        }
+        if(val === 1 && key < lastAvailable) res += lastAvailable - key
+        lastAvailable = Math.max(key + 1 , Math.max(key , lastAvailable) + val) 
+    }
+    return res
+};
