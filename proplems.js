@@ -1400,3 +1400,39 @@ var judgeSquareSum = function (c) {
     }
     return false
 };
+
+// var minPatches = function (nums, n) {
+//     let miss = 1; // JavaScript uses let for block scope variables
+//     let result = 0;
+//     let i = 0;
+
+//     while (miss <= n) {
+//         if (i < nums.length && nums[i] <= miss) {
+//             miss += nums[i];
+//             i++;
+//         } else {
+//             miss += miss;
+//             result++;
+//         }
+//     }
+
+//     return result;
+// };
+
+var minPatches = function (nums, n) {
+    let res = 0
+    let range = 0
+    let ptr = 0
+    // [1 , 2, 4, 5] 10
+    // [0 , 0] --> [0 , 1] --> [0 , 3] --> ((((([0 , 3 + 4]))))) --> [0, 12] 
+    while(range < n){
+        if(ptr < nums.length && nums[ptr] <= range + 1){
+            range += nums[ptr]
+            ptr++
+        }else{
+            res += 1
+            range += (range + 1)
+        }
+    }
+    return res
+};
