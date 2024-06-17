@@ -1378,14 +1378,25 @@ var minIncrementForUnique = function (nums) {
     nums.sort((a, b) => a - b)
     console.log(nums)
     let lastAvailable = nums[0]
-    for (let num of nums){ seen.set(num, (seen.get(num) || 0) + 1)}
+    for (let num of nums) { seen.set(num, (seen.get(num) || 0) + 1) }
     for (let [key, val] of seen) {
         let shift = key > lastAvailable ? 0 : lastAvailable - key
-        if(val > 1) {
+        if (val > 1) {
             res += (val * (val - 1) / 2) + (shift * val)
         }
-        if(val === 1 && key < lastAvailable) res += lastAvailable - key
-        lastAvailable = Math.max(key + 1 , Math.max(key , lastAvailable) + val) 
+        if (val === 1 && key < lastAvailable) res += lastAvailable - key
+        lastAvailable = Math.max(key + 1, Math.max(key, lastAvailable) + val)
     }
     return res
+};
+
+var judgeSquareSum = function (c) {
+    let squareRoot = Math.floor(Math.sqrt(c))
+    let l = 0, r = squareRoot
+    while (l <= r) {
+        let res = l ** 2 + r ** 2
+        if (res === c) return true
+        res > c ? r-- : l++
+    }
+    return false
 };
