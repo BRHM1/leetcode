@@ -1423,8 +1423,6 @@ var minPatches = function (nums, n) {
     let res = 0
     let range = 0
     let ptr = 0
-    // [1 , 2, 4, 5] 10
-    // [0 , 0] --> [0 , 1] --> [0 , 3] --> ((((([0 , 3 + 4]))))) --> [0, 12] 
     while(range < n){
         if(ptr < nums.length && nums[ptr] <= range + 1){
             range += nums[ptr]
@@ -1436,3 +1434,27 @@ var minPatches = function (nums, n) {
     }
     return res
 };
+
+var maxProfitAssignment = function(difficulty, profit, worker) {
+    // O(nlogn) O(n^2)
+    let difpro = Array(difficulty.length).fill(0).map((_ , i) => [difficulty[i] , profit[i]]) // [diff , profit]
+    difpro.sort((a , b) => a[1] - b[1])
+    worker.sort((a , b) => a - b)
+    let workPtr = worker.length - 1
+    let profitPtr = profit.length - 1
+    let res = 0
+    while(workPtr >= 0 && profitPtr >= 0){
+        let work = worker[workPtr]
+        let diff = difpro[profitPtr][0]
+        let profit = difpro[profitPtr][1]
+        if(work >= diff){
+            res += profit
+            workPtr -= 1
+        }else {
+            profitPtr -= 1
+        }
+    }
+    return res
+};
+console.log(maxProfitAssignment([2,4,6,8,10], [10,20,30,40,50], [4,5,6,7]))
+console.log(maxProfitAssignment([85,47,57], [24,66,99], [40,25,25]))
